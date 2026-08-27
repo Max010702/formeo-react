@@ -1,10 +1,23 @@
-import { configureStore } from "@reduxjs/toolkit";
+import {
+  configureStore,
+  type ThunkAction,
+  type Action,
+} from "@reduxjs/toolkit";
 
-const store = configureStore({
+import reduxLogger from "redux-logger";
+
+export const store = configureStore({
+  middleware: (getDefaultMiddleware) =>
+    // @ts-ignore
+    getDefaultMiddleware().concat(reduxLogger),
   reducer: {},
 });
 
-export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
-
-export default store;
+export type RootState = ReturnType<typeof store.getState>;
+export type AppThunk<ReturnType = void> = ThunkAction<
+  ReturnType,
+  RootState,
+  unknown,
+  Action<string>
+>;
