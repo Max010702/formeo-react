@@ -6,79 +6,13 @@ import SupportAgentOutlinedIcon from "@mui/icons-material/SupportAgentOutlined";
 import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
 import "../../../css/order.css";
 
-interface ProcessProduct {
-  id: number;
-  name: string;
-  image: string;
-  material: string;
-  price: number;
-  quantity: number;
-}
-
-interface ProcessOrder {
-  id: string;
-  status: string;
-  progress: number;
-  estimatedDelivery: string;
-  deliveryAddress: string;
-  delivery: number;
-  products: ProcessProduct[];
-}
-
-const processOrders: ProcessOrder[] = [
-  {
-    id: "FRM-2026-0498",
-    status: "Preparing your furniture",
-    progress: 45,
-    estimatedDelivery: "September 3–5, 2026",
-    deliveryAddress: "Seoul, South Korea",
-    delivery: 25,
-    products: [
-      {
-        id: 1,
-        name: "Cloud Modular Sofa",
-        image: "/img/sofa.webp",
-        material: "Natural ivory bouclé",
-        price: 1890,
-        quantity: 1,
-      },
-      {
-        id: 2,
-        name: "Nova Coffee Table",
-        image: "/img/coffee-table.webp",
-        material: "Natural travertine",
-        price: 760,
-        quantity: 1,
-      },
-    ],
-  },
-  {
-    id: "FRM-2026-0473",
-    status: "Out for delivery",
-    progress: 82,
-    estimatedDelivery: "August 31, 2026",
-    deliveryAddress: "Seoul, South Korea",
-    delivery: 25,
-    products: [
-      {
-        id: 3,
-        name: "Cane Lounge Chair",
-        image: "/img/lounge-chair.webp",
-        material: "Oak and natural cane",
-        price: 680,
-        quantity: 2,
-      },
-    ],
-  },
-];
-
 export default function ProcessOrders() {
   return (
     <TabPanel value="3">
       <Box className="process-orders">
         {processOrders.length > 0 ? (
           <Stack className="process-orders__list">
-            {processOrders.map((order) => {
+            {[1, 2].map((_ele, index) => {
               const subtotal = order.products.reduce(
                 (total, product) => total + product.price * product.quantity,
                 0,

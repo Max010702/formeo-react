@@ -1,17 +1,32 @@
 import { Box, Button, Container, Stack } from "@mui/material";
 import { NavLink } from "react-router-dom";
+import "../../../css/navbar.css";
 import Basket from "./Basket";
-
-interface Member {
-  name: string;
-  avatar?: string;
-}
+import { useEffect, useState } from "react";
 
 export default function HomeNavbar() {
-  const authMember: Member | null = true;
+  const authMember = true;
+
+  const [count, setCount] = useState<number>(0);
+  const [value, setvalue] = useState<boolean>(true);
+
+  useEffect(() => {
+    console.log("componentDidMount", count); // DATA FETCH
+    setCount(count + 1);
+
+    return () => {
+      console.log("componentWillUnmount");
+    };
+  }, [value]);
+
+  /* HANDLERS */
+
+  const buttonHandler = () => {
+    setvalue(!value);
+  };
 
   return (
-    <header className="home-navbar">
+    <div className="home-navbar">
       <Container className="navbar-container">
         <Stack className="menu">
           <Box>
@@ -19,7 +34,7 @@ export default function HomeNavbar() {
               <img
                 className="brand-logo"
                 src="/icons/burak.svg"
-                alt="Forma Furniture"
+                alt="Furniture logo"
               />
             </NavLink>
           </Box>
@@ -32,26 +47,26 @@ export default function HomeNavbar() {
             </Box>
 
             <Box className="hover-line">
-              <NavLink to="/products" activeClassName="underline">
+              <NavLink to="/products" activeClassName={"underline"}>
                 Products
               </NavLink>
             </Box>
 
-            {authMember && (
+            {authMember ? (
               <Box className="hover-line">
-                <NavLink to="/orders" activeClassName="underline">
+                <NavLink to="/orders" activeClassName={"underline"}>
                   Orders
                 </NavLink>
               </Box>
-            )}
+            ) : null}
 
-            {authMember && (
+            {authMember ? (
               <Box className="hover-line">
                 <NavLink to="/member-page" activeClassName="underline">
                   My Page
                 </NavLink>
               </Box>
-            )}
+            ) : null}
 
             <Box className="hover-line">
               <NavLink to="/help" activeClassName="underline">
@@ -62,23 +77,18 @@ export default function HomeNavbar() {
             <Basket />
 
             {!authMember ? (
-              <Button
-                component={NavLink}
-                to="/login"
-                variant="contained"
-                className="login-button"
-              >
-                Login
-              </Button>
+              <Box>
+                <Button variant="contained" className="login-button">
+                  Login
+                </Button>
+              </Box>
             ) : (
-              <NavLink to="/member-page">
-                <img
-                  className="user-avatar"
-                  src={authMember.avatar || "/icons/default-user.svg"}
-                  alt={authMember.name}
-                  aria-haspopup="true"
-                />
-              </NavLink>
+              <img
+                className="user-avatar"
+                src="/icons/default-user.svg"
+                alt="User profile"
+                aria-haspopup="true"
+              />
             )}
           </Stack>
         </Stack>
@@ -113,7 +123,7 @@ export default function HomeNavbar() {
                 Explore collection
               </Button>
 
-              {!authMember && (
+              {!authMember ? (
                 <Button
                   component={NavLink}
                   to="/signup"
@@ -122,7 +132,7 @@ export default function HomeNavbar() {
                 >
                   Sign up
                 </Button>
-              )}
+              ) : null}
             </Stack>
           </Stack>
 
@@ -133,6 +143,6 @@ export default function HomeNavbar() {
           </Box>
         </Stack>
       </Container>
-    </header>
+    </div>
   );
 }

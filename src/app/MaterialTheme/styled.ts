@@ -1,33 +1,48 @@
-import { styled } from "@mui/material/styles";
 import Badge from "@mui/material/Badge";
+import { styled } from "@mui/material/styles";
 
-export const RippleBadge = styled(Badge)(({ theme }) => ({
+export const RippleBadge = styled(Badge)({
   "& .MuiBadge-badge": {
-    color: theme.palette.secondary.main, // #B78A5A warm gold
-    backgroundColor: theme.palette.background.paper,
-    boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
+    width: 11,
+    minWidth: 11,
+    height: 11,
+    padding: 0,
+    border: "2px solid #ffffff",
+    borderRadius: "50%",
+    color: "#78936a",
+    backgroundColor: "#78936a",
+    boxShadow: "0 0 0 1px rgba(33, 26, 21, 0.08)",
 
     "&::after": {
       position: "absolute",
-      top: "-2px",
-      left: "-2px",
-      width: "120%",
-      height: "120%",
+      inset: -4,
+      border: "1px solid currentColor",
       borderRadius: "50%",
-      animation: "ripple 1.5s infinite ease-in-out",
-      border: "2px solid currentColor",
       content: '""',
+      animation: "profile-ripple 1.5s infinite ease-out",
     },
   },
 
-  "@keyframes ripple": {
+  "@keyframes profile-ripple": {
     "0%": {
-      transform: "scale(0.8)",
       opacity: 0.9,
+      transform: "scale(0.7)",
     },
-    "100%": {
-      transform: "scale(2.3)",
+
+    "70%": {
       opacity: 0,
+      transform: "scale(1.7)",
+    },
+
+    "100%": {
+      opacity: 0,
+      transform: "scale(1.7)",
     },
   },
-}));
+
+  "@media (prefers-reduced-motion: reduce)": {
+    "& .MuiBadge-badge::after": {
+      animation: "none",
+    },
+  },
+});
