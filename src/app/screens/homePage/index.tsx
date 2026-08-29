@@ -6,13 +6,28 @@ import Statistics from "./Statistic";
 import "../../../css/home.css";
 import { useEffect } from "react";
 
-export default function HomePage() {
-  // Selector: Store => Data
+import { useDispatch, useSelector } from "react-redux";
+import { type Dispatch } from "@reduxjs/toolkit";
+import { createSelector } from "reselect";
+import { setPopularDishes } from "./slice";
+import type { Product } from "../../../lib/types/product";
+import { retrievePopularDishes } from "./selector";
 
-  useEffect(() => {
-    // Backend server data request => Data
-    // Slice: Data => Store
-  }, []);
+/** REDUX SLICE % SELECTOR */
+const actionDispatch = (dispatch: Dispatch) => ({
+  setPopularDishes: (data: Product[]) => dispatch(setPopularDishes(data)),
+});
+
+const popularDishesRetriever = createSelector(
+  retrievePopularDishes,
+  (PopularDishes) => ({ PopularDishes }),
+);
+
+export default function HomePage() {
+  const { setPopularDishes } = actionDispatch(useDispatch());
+  const { popularDishes } = useSelector(popularDishesRetriever);
+
+  useEffect(() => {}, []);
 
   return (
     <div className={"homepage"}>
