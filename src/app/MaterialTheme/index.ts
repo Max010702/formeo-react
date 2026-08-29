@@ -1,30 +1,30 @@
-import { createTheme } from "@mui/material/styles";
+import { createTheme, type ThemeOptions } from "@mui/material/styles";
 import { common } from "@mui/material/colors";
 import shadow from "./shadow";
 import typography from "./typography";
 
 /**
- * LIGHT THEME (DEFAULT)
+ * WARM MODERN FURNITURE THEME
  */
-const light = {
+const light: ThemeOptions = {
   palette: {
-    type: "light",
+    mode: "light",
     background: {
-      default: "#f8f8ff",
+      default: "#F7F4EE",
       paper: common.white,
     },
     primary: {
-      contrastText: "#d7b586",
-      main: "#343434",
+      contrastText: common.white,
+      main: "#1F2A24", // deep green/black
     },
     secondary: {
-      contrastText: "#343434",
-      main: "#d7b586",
+      contrastText: "#1F2A24",
+      main: "#B78A5A", // warm wood/gold
     },
     text: {
-      primary: "#343434",
-      secondary: "#d7b586",
-      dark: common.black,
+      primary: "#25211D",
+      secondary: "#7D746A",
+      disabled: "#A39A90",
     },
   },
   components: {
@@ -37,17 +37,41 @@ const light = {
     },
     MuiCssBaseline: {
       styleOverrides: {
-        html: { height: "100%" },
-        body: { background: "#f4f6f8", height: "100%", minHeight: "100%" },
+        html: {
+          height: "100%",
+          scrollBehavior: "smooth",
+        },
+        body: {
+          background: "#F7F4EE",
+          color: "#25211D",
+          height: "100%",
+          minHeight: "100%",
+        },
+      },
+    },
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          borderRadius: 4,
+          fontWeight: 700,
+          letterSpacing: "0.08em",
+        },
+      },
+    },
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          backgroundImage: "none",
+        },
       },
     },
   },
-  shadow,
+  shadows: shadow as ThemeOptions["shadows"],
   typography,
 };
 
-// A custom theme for this app
 let theme = createTheme(light);
+
 theme = createTheme(theme, {
   components: {
     MuiContainer: {
