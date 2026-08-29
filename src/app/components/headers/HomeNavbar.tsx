@@ -1,152 +1,128 @@
-import { Box, Button, Container, Stack, Typography } from "@mui/material";
+import { Box, Button, Container, Stack } from "@mui/material";
 import { NavLink } from "react-router-dom";
 import "../../../css/navbar.css";
 
-interface HomeNavbarProps {
-  authMember?: {
-    name?: string;
-    avatar?: string;
-  } | null;
-}
+export function HomeNavbar() {
+  const authMember = null;
 
-const navigation = [
-  { label: "Home", path: "/" },
-  { label: "Orders", path: "/orders" },
-  { label: "Help", path: "/help" },
-];
-
-export function HomeNavbar({ authMember = null }: HomeNavbarProps) {
   return (
-    <Box component="header" className="home-navbar">
-      <Container maxWidth="xl" className="home-navbar__container">
-        <Stack
-          component="nav"
-          direction="row"
-          justifyContent="space-between"
-          alignItems="center"
-          className="home-navbar__navigation"
-        >
-          <NavLink to="/" className="home-navbar__logo-link">
-            <Stack direction="row" spacing={1.5} alignItems="center">
-              <Box className="home-navbar__logo-icon">
-                <Typography component="span">F</Typography>
-              </Box>
+    <div className="home-navbar">
+      <Container className="navbar-container">
+        <Stack className="menu">
+          <Box>
+            <NavLink to="/" className="brand-link">
+              <img
+                className="brand-logo"
+                src="/icons/burak.svg"
+                alt="Furniture logo"
+              />
+            </NavLink>
+          </Box>
 
-              <Box>
-                <Typography className="home-navbar__logo-title">
-                  FORMA
-                </Typography>
-
-                <Typography className="home-navbar__logo-subtitle">
-                  FINE FURNITURE
-                </Typography>
-              </Box>
-            </Stack>
-          </NavLink>
-
-          <Stack
-            direction="row"
-            alignItems="center"
-            className="home-navbar__links"
-          >
-            {navigation.map((item) => (
-              <NavLink
-                exact={item.path === "/"}
-                key={item.path}
-                to={item.path}
-                activeClassName="active"
-                className="home-navbar__link"
-              >
-                {item.label}
+          <Stack className="links">
+            <Box className="hover-line">
+              <NavLink exact to="/" activeClassName="underline">
+                Home
               </NavLink>
-            ))}
+            </Box>
 
-            {authMember && (
-              <>
-                <NavLink
-                  to="/products"
-                  activeClassName="active"
-                  className="home-navbar__link"
-                >
+            <Box className="hover-line">
+              <NavLink to="/orders" activeClassName="underline">
+                Orders
+              </NavLink>
+            </Box>
+
+            {authMember ? (
+              <Box className="hover-line">
+                <NavLink to="/products" activeClassName="underline">
                   Products
                 </NavLink>
+              </Box>
+            ) : null}
 
-                <NavLink
-                  to="/member-page"
-                  activeClassName="active"
-                  className="home-navbar__link"
-                >
+            {authMember ? (
+              <Box className="hover-line">
+                <NavLink to="/member-page" activeClassName="underline">
                   My Page
                 </NavLink>
-              </>
+              </Box>
+            ) : null}
+
+            <Box className="hover-line">
+              <NavLink to="/help" activeClassName="underline">
+                Help
+              </NavLink>
+            </Box>
+
+            {/* BASKET */}
+
+            {!authMember ? (
+              <Box>
+                <Button variant="contained" className="login-button">
+                  Login
+                </Button>
+              </Box>
+            ) : (
+              <img
+                className="user-avatar"
+                src="/icons/default-user.svg"
+                alt="User profile"
+                aria-haspopup="true"
+              />
             )}
-
-            <Button
-              component={NavLink}
-              to={authMember ? "/member-page" : "/login"}
-              variant="outlined"
-              className="home-navbar__login-button"
-            >
-              {authMember ? authMember.name || "Account" : "Sign in"}
-            </Button>
           </Stack>
-
-          <Button
-            aria-label="Open navigation menu"
-            className="home-navbar__menu-button"
-          >
-            ☰
-          </Button>
         </Stack>
 
-        <Stack
-          justifyContent="center"
-          alignItems="flex-start"
-          className="home-navbar__hero"
-        >
-          <Stack direction="row" spacing={2} alignItems="center">
-            <Box className="home-navbar__eyebrow-line" />
+        <Stack className="header-frame">
+          <Stack className="detail">
+            <Box className="small-title">
+              Timeless design · Exceptional comfort
+            </Box>
 
-            <Typography className="home-navbar__eyebrow">
-              Crafted for inspired living
-            </Typography>
+            <Box className="head-main-txt">
+              Furniture made for
+              <span> inspired living.</span>
+            </Box>
+
+            <Box className="welcome-txt">
+              Transform your home with beautifully crafted furniture designed to
+              bring warmth, comfort, and character into every room.
+            </Box>
+
+            <Box className="service-txt">
+              Premium materials · Thoughtful craftsmanship
+            </Box>
+
+            <Stack className="hero-actions">
+              <Button
+                component={NavLink}
+                to="/products"
+                variant="contained"
+                className="shop-button"
+              >
+                Explore collection
+              </Button>
+
+              {!authMember ? (
+                <Button
+                  component={NavLink}
+                  to="/signup"
+                  variant="outlined"
+                  className="signup-button"
+                >
+                  Sign up
+                </Button>
+              ) : null}
+            </Stack>
           </Stack>
 
-          <Typography component="h1" className="home-navbar__heading">
-            Timeless furniture,
-            <span> thoughtfully made.</span>
-          </Typography>
-
-          <Typography className="home-navbar__description">
-            Discover refined furniture created with honest materials,
-            exceptional craftsmanship, and comfort designed to last.
-          </Typography>
-
-          <Stack
-            direction={{ xs: "column", sm: "row" }}
-            spacing={2}
-            className="home-navbar__actions"
-          >
-            <Button
-              component={NavLink}
-              to="/products"
-              variant="contained"
-              className="home-navbar__primary-button"
-            >
-              Explore collection
-            </Button>
-
-            <Button
-              component={NavLink}
-              to="/help"
-              variant="text"
-              className="home-navbar__story-button"
-            >
-              Our story&nbsp; →
-            </Button>
-          </Stack>
+          <Box className="hero-number">
+            <span>01</span>
+            <div />
+            <span>03</span>
+          </Box>
         </Stack>
       </Container>
-    </Box>
+    </div>
   );
 }

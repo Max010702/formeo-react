@@ -1,18 +1,21 @@
 .home-navbar {
   position: relative;
+  width: 100%;
   min-height: 760px;
   overflow: hidden;
-  color: #ffffff;
+  color: #fff;
   background-image:
     linear-gradient(
       90deg,
-      rgba(16, 19, 17, 0.94) 0%,
-      rgba(16, 19, 17, 0.72) 48%,
-      rgba(16, 19, 17, 0.2) 100%
+      rgba(22, 17, 12, 0.78) 0%,
+      rgba(22, 17, 12, 0.45) 38%,
+      rgba(22, 17, 12, 0.08) 70%,
+      rgba(22, 17, 12, 0.02) 100%
     ),
-    url("/images/furniture-hero.jpg");
+    url("/images/hero.png");
   background-position: center;
   background-size: cover;
+  background-repeat: no-repeat;
 }
 
 .home-navbar::after {
@@ -22,270 +25,357 @@
   pointer-events: none;
   background: linear-gradient(
     180deg,
-    transparent 65%,
-    rgba(10, 12, 11, 0.68) 100%
+    rgba(13, 10, 7, 0.28) 0%,
+    transparent 35%,
+    rgba(13, 10, 7, 0.28) 100%
   );
 }
 
-.home-navbar__container {
+.navbar-container {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   min-height: 760px;
-  padding-right: 56px !important;
-  padding-left: 56px !important;
+  padding-right: 32px !important;
+  padding-left: 32px !important;
 }
 
-.home-navbar__navigation {
-  height: 104px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+.menu {
+  height: 105px;
+  flex-direction: row !important;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.25);
 }
 
-.home-navbar__logo-link {
-  color: inherit;
-  text-decoration: none;
+.brand-link {
+  display: flex;
+  align-items: center;
 }
 
-.home-navbar__logo-icon {
-  display: grid;
-  width: 42px;
-  height: 42px;
-  place-items: center;
-  border: 1px solid rgba(255, 255, 255, 0.65);
-  transform: rotate(45deg);
+.brand-logo {
+  display: block;
+  width: 125px;
+  height: 34px;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
 }
 
-.home-navbar__logo-icon span {
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 21px;
-  font-weight: 700;
-  transform: rotate(-45deg);
+.links {
+  min-width: 680px;
+  flex-direction: row !important;
+  align-items: center;
+  justify-content: space-between;
+  gap: 36px;
 }
 
-.home-navbar__logo-title.MuiTypography-root {
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 24px;
-  font-weight: 700;
-  line-height: 1;
-  letter-spacing: 0.08em;
-}
-
-.home-navbar__logo-subtitle.MuiTypography-root {
-  margin-top: 5px;
-  color: rgba(255, 255, 255, 0.65);
-  font-size: 8px;
-  letter-spacing: 0.32em;
-}
-
-.home-navbar__links {
-  gap: 40px;
-}
-
-.home-navbar__link {
+.hover-line a {
   position: relative;
-  color: rgba(255, 255, 255, 0.78);
+  padding: 12px 0;
+  color: rgba(255, 255, 255, 0.82);
+  font-family: Arial, Helvetica, sans-serif;
   font-size: 14px;
   font-weight: 500;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
   text-decoration: none;
-  transition: color 250ms ease;
+  transition:
+    color 250ms ease,
+    opacity 250ms ease;
 }
 
-.home-navbar__link::after {
+.hover-line a::after {
   position: absolute;
   right: 100%;
-  bottom: -10px;
+  bottom: 3px;
   left: 0;
   height: 1px;
   content: "";
-  background-color: #d7b98e;
+  background: #dfc19a;
   transition: right 250ms ease;
 }
 
-.home-navbar__link:hover,
-.home-navbar__link.active {
-  color: #ffffff;
+.hover-line a:hover,
+.hover-line a.underline {
+  color: #fff;
 }
 
-.home-navbar__link:hover::after,
-.home-navbar__link.active::after {
+.hover-line a:hover::after,
+.hover-line a.underline::after {
   right: 0;
 }
 
-.home-navbar__login-button.MuiButton-root {
-  min-width: 112px;
+.login-button.MuiButton-root {
+  min-width: 108px;
   height: 44px;
-  margin-left: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.7);
+  border: 1px solid #dfc19a;
   border-radius: 0;
-  color: #ffffff;
+  color: #21170f;
+  background: #dfc19a;
+  box-shadow: none;
   font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-}
-
-.home-navbar__login-button.MuiButton-root:hover {
-  border-color: #d7b98e;
-  color: #171a18;
-  background-color: #d7b98e;
-}
-
-.home-navbar__menu-button.MuiButton-root {
-  display: none;
-  min-width: 46px;
-  width: 46px;
-  height: 46px;
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  border-radius: 0;
-  color: #ffffff;
-  font-size: 22px;
-}
-
-.home-navbar__hero {
-  min-height: 650px;
-  max-width: 720px;
-  padding-bottom: 80px;
-}
-
-.home-navbar__eyebrow-line {
-  width: 46px;
-  height: 1px;
-  background-color: #d7b98e;
-}
-
-.home-navbar__eyebrow.MuiTypography-root {
-  color: #d7b98e;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.28em;
+  font-weight: 700;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
-.home-navbar__heading.MuiTypography-root {
-  max-width: 680px;
-  margin-top: 24px;
+.login-button.MuiButton-root:hover {
+  color: #21170f;
+  background: #edd5b7;
+  box-shadow: none;
+}
+
+.user-avatar {
+  width: 44px;
+  height: 44px;
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+  object-fit: cover;
+  cursor: pointer;
+}
+
+.header-frame {
+  min-height: 655px;
+  flex-direction: row !important;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 60px;
+}
+
+.detail {
+  width: 100%;
+  max-width: 650px;
+  align-items: flex-start;
+}
+
+.small-title {
+  position: relative;
+  padding-left: 65px;
+  color: #dfc19a;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.small-title::before {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 45px;
+  height: 1px;
+  content: "";
+  background: #dfc19a;
+}
+
+.head-main-txt {
+  max-width: 640px;
+  margin-top: 27px;
   font-family: Georgia, "Times New Roman", serif;
-  font-size: 5.7rem;
+  font-size: clamp(54px, 6vw, 88px);
   font-weight: 400;
   line-height: 0.98;
   letter-spacing: -0.045em;
 }
 
-.home-navbar__heading span {
-  color: #d7b98e;
+.head-main-txt span {
+  color: #dfc19a;
   font-style: italic;
 }
 
-.home-navbar__description.MuiTypography-root {
-  max-width: 520px;
-  margin-top: 28px;
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 17px;
+.welcome-txt {
+  max-width: 510px;
+  margin-top: 30px;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 16px;
+  font-weight: 400;
   line-height: 1.8;
 }
 
-.home-navbar__actions {
-  margin-top: 40px;
-}
-
-.home-navbar__primary-button.MuiButton-root {
-  min-width: 190px;
-  height: 54px;
-  padding: 0 32px;
-  border-radius: 0;
-  color: #171a18;
-  background-color: #d7b98e;
-  box-shadow: none;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-}
-
-.home-navbar__primary-button.MuiButton-root:hover {
-  background-color: #e5cba5;
-  box-shadow: none;
-}
-
-.home-navbar__story-button.MuiButton-root {
-  min-width: 160px;
-  height: 54px;
-  padding: 0 24px;
-  color: #ffffff;
-  font-size: 12px;
+.service-txt {
+  margin-top: 22px;
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.14em;
+  text-transform: uppercase;
 }
 
-.home-navbar__story-button.MuiButton-root:hover {
-  color: #d7b98e;
-  background-color: rgba(255, 255, 255, 0.05);
+.hero-actions {
+  margin-top: 42px;
+  flex-direction: row !important;
+  gap: 16px;
 }
 
-@media (max-width: 899px) {
+.shop-button.MuiButton-root,
+.signup-button.MuiButton-root {
+  height: 54px;
+  padding: 0 30px;
+  border-radius: 0;
+  box-shadow: none;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.shop-button.MuiButton-root {
+  color: #21170f;
+  background: #dfc19a;
+}
+
+.shop-button.MuiButton-root:hover {
+  background: #edd5b7;
+  box-shadow: none;
+}
+
+.signup-button.MuiButton-root {
+  border-color: rgba(255, 255, 255, 0.72);
+  color: #fff;
+}
+
+.signup-button.MuiButton-root:hover {
+  border-color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.hero-number {
+  position: absolute;
+  right: 32px;
+  bottom: 54px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+}
+
+.hero-number div {
+  width: 70px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.45);
+}
+
+.hero-number div::before {
+  display: block;
+  width: 33.33%;
+  height: 1px;
+  content: "";
+  background: #fff;
+}
+
+@media (max-width: 950px) {
+  .links {
+    min-width: auto;
+    gap: 22px;
+  }
+
+  .head-main-txt {
+    max-width: 560px;
+  }
+}
+
+@media (max-width: 768px) {
   .home-navbar,
-  .home-navbar__container {
+  .navbar-container {
     min-height: 720px;
   }
 
   .home-navbar {
-    background-position: 62% center;
+    background-position: 63% center;
   }
 
-  .home-navbar__container {
-    padding-right: 24px !important;
-    padding-left: 24px !important;
+  .navbar-container {
+    padding-right: 22px !important;
+    padding-left: 22px !important;
   }
 
-  .home-navbar__navigation {
-    height: 80px;
+  .menu {
+    height: 84px;
   }
 
-  .home-navbar__links {
-    display: none !important;
+  .links .hover-line {
+    display: none;
   }
 
-  .home-navbar__menu-button.MuiButton-root {
-    display: flex;
+  .links {
+    min-width: auto;
+    gap: 0;
   }
 
-  .home-navbar__hero {
-    min-height: 620px;
-    padding-bottom: 48px;
+  .header-frame {
+    min-height: 636px;
+    padding-bottom: 40px;
   }
 
-  .home-navbar__heading.MuiTypography-root {
-    max-width: 600px;
-    font-size: 4.5rem;
+  .detail {
+    max-width: 570px;
+  }
+
+  .head-main-txt {
+    font-size: clamp(48px, 12vw, 68px);
+  }
+
+  .welcome-txt {
+    max-width: 460px;
+  }
+
+  .hero-number {
+    right: 22px;
+    bottom: 30px;
   }
 }
 
-@media (max-width: 599px) {
+@media (max-width: 480px) {
   .home-navbar {
-    background-position: 68% center;
+    background-position: 59% center;
   }
 
-  .home-navbar__logo-title.MuiTypography-root {
-    font-size: 20px;
+  .brand-logo {
+    width: 105px;
   }
 
-  .home-navbar__heading.MuiTypography-root {
+  .login-button.MuiButton-root {
+    min-width: 88px;
+    height: 40px;
+  }
+
+  .small-title {
+    padding-left: 48px;
+    font-size: 9px;
+    letter-spacing: 0.16em;
+  }
+
+  .small-title::before {
+    width: 34px;
+  }
+
+  .head-main-txt {
     margin-top: 22px;
-    font-size: 3.25rem;
-    line-height: 1.02;
+    font-size: 48px;
   }
 
-  .home-navbar__description.MuiTypography-root {
+  .welcome-txt {
     margin-top: 24px;
-    font-size: 15px;
+    font-size: 14px;
     line-height: 1.7;
   }
 
-  .home-navbar__actions {
-    width: 100%;
-    margin-top: 32px;
+  .service-txt {
+    line-height: 1.7;
   }
 
-  .home-navbar__primary-button.MuiButton-root,
-  .home-navbar__story-button.MuiButton-root {
+  .hero-actions {
     width: 100%;
+    margin-top: 32px;
+    flex-direction: column !important;
+  }
+
+  .shop-button.MuiButton-root,
+  .signup-button.MuiButton-root {
+    width: 100%;
+  }
+
+  .hero-number {
+    display: none;
   }
 }
