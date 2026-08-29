@@ -535,3 +535,354 @@
     width: 105px;
   }
 }
+
+/* BASKET */
+
+.basket {
+  display: flex;
+  align-items: center;
+}
+
+.basket__trigger.MuiIconButton-root {
+  width: 44px;
+  height: 44px;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 0;
+  color: inherit;
+  transition:
+    border-color 250ms ease,
+    background-color 250ms ease;
+}
+
+.basket__trigger.MuiIconButton-root:hover {
+  border-color: #dfc19a;
+  background: rgba(223, 193, 154, 0.1);
+}
+
+.basket__trigger svg {
+  width: 21px;
+  height: 21px;
+}
+
+.basket__badge .MuiBadge-badge {
+  min-width: 17px;
+  height: 17px;
+  padding: 0 4px;
+  border: 2px solid #211a15;
+  border-radius: 50%;
+  color: #211a15;
+  background: #dfc19a;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.basket__paper.MuiPaper-root {
+  width: min(430px, calc(100vw - 24px));
+  max-width: none;
+  margin-top: 12px;
+  overflow: visible;
+  border: 1px solid rgba(63, 46, 31, 0.12);
+  border-radius: 0;
+  background: #faf8f4;
+  box-shadow: 0 22px 65px rgba(35, 25, 17, 0.22);
+}
+
+.basket__paper::before {
+  position: absolute;
+  top: 0;
+  right: 17px;
+  z-index: 0;
+  width: 12px;
+  height: 12px;
+  content: "";
+  background: #faf8f4;
+  transform: translateY(-50%) rotate(45deg);
+}
+
+.basket__menu-list.MuiList-root {
+  padding: 0;
+}
+
+.basket__frame {
+  width: 100%;
+  color: #211a15;
+}
+
+.basket__header {
+  min-height: 102px;
+  padding: 25px 28px;
+  flex-direction: row !important;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(63, 46, 31, 0.12);
+}
+
+.basket__eyebrow {
+  margin-bottom: 5px;
+  color: #9a7046;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.basket__title {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 25px;
+}
+
+.basket__item-count {
+  color: rgba(33, 26, 21, 0.55);
+  font-size: 12px;
+}
+
+.basket__items {
+  max-height: 345px;
+  padding: 0 28px;
+  overflow-y: auto;
+}
+
+.basket__items::-webkit-scrollbar {
+  width: 4px;
+}
+
+.basket__items::-webkit-scrollbar-thumb {
+  background: rgba(154, 112, 70, 0.4);
+}
+
+.basket__item {
+  display: flex;
+  gap: 16px;
+  padding: 24px 0;
+  border-bottom: 1px solid rgba(63, 46, 31, 0.1);
+}
+
+.basket__image-wrapper {
+  flex: 0 0 94px;
+  width: 94px;
+  height: 104px;
+  overflow: hidden;
+  background: #eee8df;
+}
+
+.basket__product-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 350ms ease;
+}
+
+.basket__item:hover .basket__product-image {
+  transform: scale(1.04);
+}
+
+.basket__product-details {
+  min-width: 0;
+  flex: 1;
+  justify-content: space-between;
+}
+
+.basket__product-heading,
+.basket__product-bottom {
+  flex-direction: row !important;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.basket__product-heading {
+  align-items: flex-start;
+}
+
+.basket__product-name {
+  color: #211a15;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 17px;
+}
+
+.basket__product-category {
+  margin-top: 6px;
+  color: rgba(33, 26, 21, 0.47);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.basket__remove-item.MuiIconButton-root {
+  padding: 2px;
+  color: rgba(33, 26, 21, 0.35);
+}
+
+.basket__remove-item.MuiIconButton-root:hover {
+  color: #9c4339;
+  background: transparent;
+}
+
+.basket__remove-item svg {
+  width: 18px;
+  height: 18px;
+}
+
+.basket__quantity {
+  height: 34px;
+  flex-direction: row !important;
+  align-items: center;
+  border: 1px solid rgba(63, 46, 31, 0.2);
+}
+
+.basket__quantity button {
+  width: 31px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  color: #211a15;
+  background: transparent;
+  font-size: 17px;
+  cursor: pointer;
+  transition: background-color 200ms ease;
+}
+
+.basket__quantity button:hover {
+  background: #eee6dc;
+}
+
+.basket__quantity span {
+  display: grid;
+  width: 27px;
+  height: 32px;
+  place-items: center;
+  color: #211a15;
+  font-size: 12px;
+}
+
+.basket__product-price {
+  color: #211a15;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.basket__summary {
+  padding: 23px 28px 28px;
+  gap: 12px;
+  background: #f2ede5;
+}
+
+.basket__summary-row,
+.basket__summary-total {
+  flex-direction: row !important;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.basket__summary-row {
+  color: rgba(33, 26, 21, 0.58);
+  font-size: 12px;
+}
+
+.basket__summary-row strong {
+  color: #211a15;
+  font-weight: 500;
+}
+
+.basket__summary-total {
+  margin-top: 4px;
+  padding-top: 17px;
+  border-top: 1px solid rgba(63, 46, 31, 0.14);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 18px;
+}
+
+.basket__summary-total strong {
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.basket__checkout-button.MuiButton-root,
+.basket__continue-button.MuiButton-root {
+  height: 52px;
+  border-radius: 0;
+  color: #fff;
+  background: #332317;
+  box-shadow: none;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.basket__checkout-button.MuiButton-root {
+  margin-top: 12px;
+}
+
+.basket__checkout-button.MuiButton-root:hover,
+.basket__continue-button.MuiButton-root:hover {
+  background: #9a7046;
+  box-shadow: none;
+}
+
+.basket__empty {
+  min-height: 330px;
+  padding: 50px 28px;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.basket__empty-icon {
+  display: grid;
+  width: 70px;
+  height: 70px;
+  place-items: center;
+  border: 1px solid rgba(154, 112, 70, 0.28);
+  border-radius: 50%;
+  color: #9a7046;
+}
+
+.basket__empty-icon svg {
+  width: 27px;
+  height: 27px;
+}
+
+.basket__empty-title {
+  margin-top: 22px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 22px;
+}
+
+.basket__empty-text {
+  max-width: 250px;
+  margin-top: 10px;
+  color: rgba(33, 26, 21, 0.55);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.basket__continue-button.MuiButton-root {
+  width: 100%;
+  margin-top: 27px;
+}
+
+@media (max-width: 480px) {
+  .basket__paper.MuiPaper-root {
+    width: calc(100vw - 16px);
+  }
+
+  .basket__header,
+  .basket__summary {
+    padding-right: 20px;
+    padding-left: 20px;
+  }
+
+  .basket__items {
+    padding: 0 20px;
+  }
+
+  .basket__image-wrapper {
+    flex-basis: 78px;
+    width: 78px;
+    height: 92px;
+  }
+
+  .basket__product-name {
+    font-size: 15px;
+  }
+}
