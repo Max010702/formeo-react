@@ -40,7 +40,7 @@ export default function PopularProducts() {
     <div className="popular-products-frame">
       <Container>
         <Stack className="popular-section">
-          <Box className="category-title">Popular Furniture Products</Box>
+          <Box className="category-title">Popular Products</Box>
 
           <Stack className="cards-frame">
             {list.map((product) => (
