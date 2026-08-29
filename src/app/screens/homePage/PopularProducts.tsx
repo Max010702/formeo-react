@@ -6,67 +6,22 @@ import CardContent from "@mui/joy/CardContent";
 import Typography from "@mui/joy/Typography";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import ArrowOutwardIcon from "@mui/icons-material/ArrowOutward";
-import "../../../css/home.css";
 
-interface Product {
-  id: number;
-  productName: string;
-  category: string;
-  imagePath: string;
-  description: string;
-  price: number;
-  views: number;
-}
+import { useSelector } from "react-redux";
+import { createSelector } from "reselect";
+import { retrievePopularDishes } from "./selector";
+import { serverApi } from "../../lib/config";
+import type { Product } from "../..//lib/types/product";
 
-const products: Product[] = [
-  {
-    id: 1,
-    productName: "Cloud Modular Sofa",
-    category: "Living room",
-    imagePath: "/img/sofa.webp",
-    description: "Soft curves and generous comfort for modern living.",
-    price: 1890,
-    views: 120,
-  },
-  {
-    id: 2,
-    productName: "Oak Dining Table",
-    category: "Dining room",
-    imagePath: "/img/dining-table.webp",
-    description: "A timeless solid-oak table crafted for shared moments.",
-    price: 1240,
-    views: 98,
-  },
-  {
-    id: 3,
-    productName: "Cane Lounge Chair",
-    category: "Lounge",
-    imagePath: "/img/lounge-chair.webp",
-    description: "Natural materials paired with a relaxed silhouette.",
-    price: 680,
-    views: 85,
-  },
-  {
-    id: 4,
-    productName: "Haven King Bed",
-    category: "Bedroom",
-    imagePath: "/img/bed.webp",
-    description: "An elegant upholstered bed designed for restful nights.",
-    price: 1560,
-    views: 76,
-  },
-  {
-    id: 5,
-    productName: "Haven King Bed",
-    category: "Bedroom",
-    imagePath: "/img/bed.webp",
-    description: "An elegant upholstered bed designed for restful nights.",
-    price: 1560,
-    views: 76,
-  },
-];
+/** REDUX SLICE & SELECTOR */
+const popularDishesRetriever = createSelector(
+  retrievePopularDishes,
+  (popularDishes) => ({ popularDishes }),
+);
 
 export default function PopularProducts() {
+  const { popularDishes } = useSelector(popularDishesRetriever);
+
   return (
     <section className="popular-products">
       <Container className="popular-products__container">
@@ -86,82 +41,102 @@ export default function PopularProducts() {
         </Stack>
 
         <CssVarsProvider>
-          {products.length > 0 ? (
+          {popularDishes.length > 0 ? (
             <Box className="popular-products__grid">
-              {products.map((product, index) => (
-                <Card
-                  key={product.id}
-                  className={`product-card ${
-                    index === 0 ? "product-card--featured" : ""
-                  }`}
-                >
-                  <CardCover>
-                    <img
-                      src={product.imagePath}
-                      alt={product.productName}
-                      loading="lazy"
-                    />
-                  </CardCover>
+              {popularDishes.map((product: Product, index: number) => {
+                const imagePath = product.productImages?.[0]
+                  ? `${serverApi}/${product.productImages[0]}`
+                  : "/images/product-placeholder.webp";
 
-                  <CardCover className="product-card__overlay" />
+                const collection = product.productCollection
+                  .toLowerCase()
+                  .split("_")
+                  .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                  .join(" ");
 
-                  <CardContent className="product-card__content">
-                    <Stack className="product-card__top">
-                      <Box className="product-card__number">
-                        {String(index + 1).padStart(2, "0")}
-                      </Box>
+                return (
+                  <Card
+                    key={product._id}
+                    className={`product-card ${
+                      index === 0 ? "product-card--featured" : ""
+                    }`}
+                  >
+                    <CardCover>
+                      <img
+                        src={imagePath}
+                        alt={product.productName}
+                        loading="lazy"
+                      />
+                    </CardCover>
 
-                      <Stack className="product-card__views">
-                        <VisibilityOutlinedIcon />
-                        <span>{product.views}</span>
-                      </Stack>
-                    </Stack>
+                    <CardCover className="product-card__overlay" />
 
-                    <Box className="product-card__information">
-                      <Box className="product-card__category">
-                        {product.category}
-                      </Box>
-
-                      <Stack className="product-card__name-row">
-                        <Typography
-                          component="h3"
-                          className="product-card__name"
-                        >
-                          {product.productName}
-                        </Typography>
-
-                        <Box
-                          component="button"
-                          className="product-card__open-button"
-                          aria-label={`View ${product.productName}`}
-                        >
-                          <ArrowOutwardIcon />
-                        </Box>
-                      </Stack>
-
-                      <Box className="product-card__description">
-                        {product.description}
-                      </Box>
-
-                      <Box className="product-card__divider" />
-
-                      <Stack className="product-card__footer">
-                        <Box className="product-card__price-label">
-                          Starting from
+                    <CardContent className="product-card__content">
+                      <Stack className="product-card__top">
+                        <Box className="product-card__number">
+                          {String(index + 1).padStart(2, "0")}
                         </Box>
 
-                        <Box className="product-card__price">
-                          ${product.price.toLocaleString()}
-                        </Box>
+                        <Stack className="product-card__views">
+                          <VisibilityOutlinedIcon />
+                          <span>{product.productView}</span>
+                        </Stack>
                       </Stack>
-                    </Box>
-                  </CardContent>
-                </Card>
-              ))}
+
+                      <Box className="product-card__information">
+                        <Box className="product-card__category">
+                          {collection}
+                        </Box>
+
+                        <Stack className="product-card__name-row">
+                          <Typography
+                            component="h3"
+                            className="product-card__name"
+                          >
+                            {product.productName}
+                          </Typography>
+
+                          <Box
+                            component="button"
+                            type="button"
+                            className="product-card__open-button"
+                            aria-label={`View ${product.productName}`}
+                          >
+                            <ArrowOutwardIcon />
+                          </Box>
+                        </Stack>
+
+                        <Box className="product-card__description">
+                          {product.productDesc ||
+                            "Thoughtfully designed furniture made with quality materials and lasting comfort."}
+                        </Box>
+
+                        <Box className="product-card__divider" />
+
+                        <Stack className="product-card__footer">
+                          <Box className="product-card__price-label">
+                            Starting from
+                          </Box>
+
+                          <Box className="product-card__price">
+                            ${product.productPrice.toLocaleString()}
+                          </Box>
+                        </Stack>
+                      </Box>
+                    </CardContent>
+                  </Card>
+                );
+              })}
             </Box>
           ) : (
             <Stack className="popular-products__empty">
-              <Box>No popular furniture is available.</Box>
+              <Box className="popular-products__empty-title">
+                No popular furniture available
+              </Box>
+
+              <Box className="popular-products__empty-text">
+                Our most-loved furniture pieces will appear here soon.
+              </Box>
             </Stack>
           )}
         </CssVarsProvider>
