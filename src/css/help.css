@@ -1,0 +1,436 @@
+.help-page {
+  width: 100%;
+  min-height: 100vh;
+  padding-bottom: 120px;
+  color: #211a15;
+  background: #f8f5ef;
+}
+
+.help-container {
+  padding-right: 32px !important;
+  padding-left: 32px !important;
+}
+
+.help-page__header {
+  padding: 90px 0 80px;
+  color: #fff;
+  background:
+    linear-gradient(90deg, rgba(22, 17, 12, 0.86), rgba(22, 17, 12, 0.28)),
+    url("/images/hero.png") center 55% / cover no-repeat;
+}
+
+.help-page__eyebrow {
+  position: relative;
+  padding-left: 58px;
+  color: #dfc19a;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.help-page__eyebrow::before {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 40px;
+  height: 1px;
+  content: "";
+  background: #dfc19a;
+}
+
+.help-page__title {
+  margin: 24px 0 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(52px, 6vw, 80px);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -0.045em;
+}
+
+.help-page__title span {
+  color: #dfc19a;
+  font-style: italic;
+}
+
+.help-page__description {
+  max-width: 550px;
+  margin-top: 24px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+.help-menu {
+  border-bottom: 1px solid rgba(63, 46, 31, 0.15);
+}
+
+.help-tabs .MuiTabs-indicator {
+  height: 2px;
+  background: #9a7046;
+}
+
+.help-tabs .MuiTab-root {
+  min-height: 72px;
+  padding: 15px 35px;
+  color: rgba(33, 26, 21, 0.48);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.help-tabs .MuiTab-root.Mui-selected {
+  color: #211a15;
+}
+
+.help-tabs .MuiTab-root svg {
+  width: 19px;
+  height: 19px;
+}
+
+.help-main-content .MuiTabPanel-root {
+  padding: 65px 0 0;
+}
+
+.help-section__heading {
+  margin-bottom: 50px;
+  flex-direction: row !important;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 45px;
+}
+
+.help-section__number {
+  margin-bottom: 13px;
+  color: #9a7046;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+}
+
+.help-section__title {
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(35px, 4vw, 51px);
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+}
+
+.help-section__introduction {
+  max-width: 410px;
+  color: rgba(33, 26, 21, 0.55);
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+.terms-list {
+  border-top: 1px solid rgba(63, 46, 31, 0.15);
+}
+
+.terms-list__item {
+  display: grid;
+  min-height: 105px;
+  padding: 25px 10px;
+  grid-template-columns: 70px minmax(0, 1fr);
+  gap: 25px;
+  align-items: center;
+  border-bottom: 1px solid rgba(63, 46, 31, 0.15);
+}
+
+.terms-list__number {
+  color: #9a7046;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 14px;
+}
+
+.terms-list__item p {
+  max-width: 850px;
+  margin: 0;
+  color: rgba(33, 26, 21, 0.68);
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+.faq-list {
+  border-top: 1px solid rgba(63, 46, 31, 0.15);
+}
+
+.faq-item.MuiAccordion-root {
+  margin: 0;
+  border-bottom: 1px solid rgba(63, 46, 31, 0.15);
+  border-radius: 0;
+  background: transparent;
+}
+
+.faq-item.MuiAccordion-root::before {
+  display: none;
+}
+
+.faq-item.Mui-expanded {
+  margin: 0 !important;
+  background: #f1ece4;
+}
+
+.faq-item__summary.MuiAccordionSummary-root {
+  min-height: 88px;
+  padding: 0 20px 0 10px;
+}
+
+.faq-item__summary .MuiAccordionSummary-content {
+  margin: 20px 0;
+  align-items: center;
+}
+
+.faq-item__number {
+  width: 70px;
+  flex: 0 0 70px;
+  color: #9a7046;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 13px;
+}
+
+.faq-item__question.MuiTypography-root {
+  color: #211a15;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 20px;
+}
+
+.faq-item__summary .MuiAccordionSummary-expandIconWrapper {
+  color: #9a7046;
+}
+
+.faq-item__details.MuiAccordionDetails-root {
+  padding: 0 70px 30px 80px;
+}
+
+.faq-item__details p {
+  max-width: 760px;
+  color: rgba(33, 26, 21, 0.6);
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+.contact-layout {
+  display: grid;
+  grid-template-columns: 0.8fr 1.2fr;
+  border: 1px solid rgba(63, 46, 31, 0.14);
+}
+
+.contact-information {
+  padding: 50px 42px;
+  justify-content: space-between;
+  color: #fff;
+  background: #211a15;
+}
+
+.contact-information__eyebrow {
+  color: #dfc19a;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.contact-information__title {
+  max-width: 380px;
+  margin-top: 20px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 35px;
+  line-height: 1.08;
+}
+
+.contact-information__description {
+  max-width: 390px;
+  margin-top: 22px;
+  color: rgba(255, 255, 255, 0.58);
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+.contact-information__list {
+  margin-top: 55px;
+  gap: 25px;
+}
+
+.contact-information__item {
+  flex-direction: row !important;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.contact-information__item > svg {
+  width: 20px;
+  color: #dfc19a;
+}
+
+.contact-information__item span,
+.contact-information__item strong,
+.contact-information__item a {
+  display: block;
+}
+
+.contact-information__item span {
+  margin-bottom: 6px;
+  color: rgba(255, 255, 255, 0.43);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.contact-information__item strong,
+.contact-information__item a {
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 11px;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.contact-form {
+  display: flex;
+  padding: 50px 45px;
+  flex-direction: column;
+  gap: 24px;
+  background: #fff;
+}
+
+.contact-form__row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.contact-form__field {
+  display: flex;
+  flex-direction: column;
+}
+
+.contact-form__field label {
+  margin-bottom: 10px;
+  color: #211a15;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.contact-form__field input,
+.contact-form__field textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid rgba(63, 46, 31, 0.18);
+  border-radius: 0;
+  outline: none;
+  color: #211a15;
+  background: #faf8f4;
+  font-family: inherit;
+  font-size: 13px;
+  transition: border-color 200ms ease;
+}
+
+.contact-form__field input {
+  height: 52px;
+  padding: 0 16px;
+}
+
+.contact-form__field textarea {
+  padding: 16px;
+  resize: vertical;
+}
+
+.contact-form__field input:focus,
+.contact-form__field textarea:focus {
+  border-color: #9a7046;
+}
+
+.contact-form__button.MuiButton-root {
+  align-self: flex-end;
+  min-width: 185px;
+  height: 52px;
+  border-radius: 0;
+  color: #fff;
+  background: #332317;
+  box-shadow: none;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.contact-form__button.MuiButton-root:hover {
+  background: #9a7046;
+  box-shadow: none;
+}
+
+@media (max-width: 850px) {
+  .help-section__heading {
+    align-items: flex-start;
+    flex-direction: column !important;
+    gap: 20px;
+  }
+
+  .contact-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .help-page {
+    padding-bottom: 75px;
+  }
+
+  .help-container {
+    padding-right: 20px !important;
+    padding-left: 20px !important;
+  }
+
+  .help-page__header {
+    padding: 65px 0 60px;
+  }
+
+  .help-page__title {
+    font-size: 49px;
+  }
+
+  .help-tabs .MuiTab-root {
+    padding-right: 20px;
+    padding-left: 20px;
+  }
+
+  .help-main-content .MuiTabPanel-root {
+    padding-top: 45px;
+  }
+
+  .terms-list__item {
+    grid-template-columns: 40px minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .faq-item__number {
+    width: 40px;
+    flex-basis: 40px;
+  }
+
+  .faq-item__question.MuiTypography-root {
+    font-size: 17px;
+  }
+
+  .faq-item__details.MuiAccordionDetails-root {
+    padding: 0 20px 25px 50px;
+  }
+
+  .contact-information,
+  .contact-form {
+    padding: 35px 24px;
+  }
+
+  .contact-form__row {
+    grid-template-columns: 1fr;
+  }
+
+  .contact-form__button.MuiButton-root {
+    width: 100%;
+  }
+}
