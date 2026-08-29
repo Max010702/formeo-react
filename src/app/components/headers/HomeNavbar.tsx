@@ -4,7 +4,7 @@ import "../../../css/navbar.css";
 import Basket from "./Basket";
 
 export default function HomeNavbar() {
-  const authMember = null;
+  const authMember = true;
 
   return (
     <div className="home-navbar">
