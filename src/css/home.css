@@ -726,3 +726,235 @@
     transform: none;
   }
 }
+
+/* ADVERTISEMENT */
+.advertisement {
+  position: relative;
+  width: 100%;
+  min-height: 720px;
+  overflow: hidden;
+  color: #ffffff;
+  background: #211a15;
+}
+
+.advertisement__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.advertisement__overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(22, 17, 12, 0.88) 0%,
+      rgba(22, 17, 12, 0.58) 43%,
+      rgba(22, 17, 12, 0.12) 75%,
+      rgba(22, 17, 12, 0.06) 100%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(22, 17, 12, 0.1) 55%,
+      rgba(22, 17, 12, 0.55) 100%
+    );
+}
+
+.advertisement__container {
+  position: relative;
+  z-index: 2;
+  min-height: 720px;
+  padding-right: 32px !important;
+  padding-left: 32px !important;
+}
+
+.advertisement__content {
+  min-height: 720px;
+  max-width: 690px;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.advertisement__eyebrow {
+  flex-direction: row !important;
+  align-items: center;
+  gap: 17px;
+  color: #dfc19a;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.advertisement__line {
+  width: 44px;
+  height: 1px;
+  background: #dfc19a;
+}
+
+.advertisement__title {
+  max-width: 670px;
+  margin-top: 27px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(54px, 6vw, 88px);
+  font-weight: 400;
+  line-height: 0.98;
+  letter-spacing: -0.045em;
+}
+
+.advertisement__title span {
+  color: #dfc19a;
+  font-style: italic;
+}
+
+.advertisement__description {
+  max-width: 520px;
+  margin-top: 30px;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 15px;
+  line-height: 1.85;
+}
+
+.advertisement__actions {
+  margin-top: 42px;
+  flex-direction: row !important;
+  align-items: center;
+  gap: 18px;
+}
+
+.advertisement__primary-button.MuiButton-root {
+  min-width: 195px;
+  height: 54px;
+  padding: 0 30px;
+  border-radius: 0;
+  color: #211a15;
+  background: #dfc19a;
+  box-shadow: none;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.advertisement__primary-button.MuiButton-root:hover {
+  background: #ecd2af;
+  box-shadow: none;
+}
+
+.advertisement__story-button.MuiButton-root {
+  min-width: 190px;
+  height: 54px;
+  padding: 0 12px;
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.advertisement__story-button.MuiButton-root:hover {
+  color: #dfc19a;
+  background: transparent;
+}
+
+.advertisement__play-icon {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: 50%;
+  transition:
+    border-color 250ms ease,
+    background-color 250ms ease;
+}
+
+.advertisement__story-button:hover .advertisement__play-icon {
+  border-color: #dfc19a;
+  background: rgba(223, 193, 154, 0.12);
+}
+
+.advertisement__play-icon svg {
+  width: 19px;
+  height: 19px;
+}
+
+.advertisement__scroll-text {
+  position: absolute;
+  right: 35px;
+  bottom: 42px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  transform: rotate(90deg);
+  transform-origin: right center;
+}
+
+.advertisement__scroll-text div {
+  width: 58px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.45);
+}
+
+@media (max-width: 768px) {
+  .advertisement,
+  .advertisement__container,
+  .advertisement__content {
+    min-height: 650px;
+  }
+
+  .advertisement__overlay {
+    background: rgba(22, 17, 12, 0.65);
+  }
+
+  .advertisement__container {
+    padding-right: 22px !important;
+    padding-left: 22px !important;
+  }
+
+  .advertisement__content {
+    max-width: 600px;
+  }
+
+  .advertisement__scroll-text {
+    display: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .advertisement,
+  .advertisement__container,
+  .advertisement__content {
+    min-height: 620px;
+  }
+
+  .advertisement__title {
+    font-size: 48px;
+  }
+
+  .advertisement__description {
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  .advertisement__actions {
+    width: 100%;
+    align-items: stretch;
+    flex-direction: column !important;
+  }
+
+  .advertisement__primary-button.MuiButton-root,
+  .advertisement__story-button.MuiButton-root {
+    width: 100%;
+  }
+}
