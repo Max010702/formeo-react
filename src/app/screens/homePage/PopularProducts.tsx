@@ -3,49 +3,98 @@ import { CssVarsProvider } from "@mui/joy/styles";
 import Card from "@mui/joy/Card";
 import CardCover from "@mui/joy/CardCover";
 import CardContent from "@mui/joy/CardContent";
-import CardOverflow from "@mui/joy/CardOverflow";
 import Typography from "@mui/joy/Typography";
-import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
-import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
+import ArrowOutwardIcon from "@mui/icons-material/ArrowOutward";
+import "../../../css/home.css";
 
-const list = [
+interface Product {
+  id: number;
+  productName: string;
+  category: string;
+  imagePath: string;
+  description: string;
+  price: number;
+  views: number;
+}
+
+const products: Product[] = [
   {
-    productName: "Modern Sofa",
+    id: 1,
+    productName: "Cloud Modular Sofa",
+    category: "Living room",
     imagePath: "/img/sofa.webp",
-    description: "Comfortable modern sofa",
+    description: "Soft curves and generous comfort for modern living.",
+    price: 1890,
     views: 120,
   },
   {
-    productName: "Dining Table",
+    id: 2,
+    productName: "Oak Dining Table",
+    category: "Dining room",
     imagePath: "/img/dining-table.webp",
-    description: "Elegant wooden dining table",
+    description: "A timeless solid-oak table crafted for shared moments.",
+    price: 1240,
     views: 98,
   },
   {
-    productName: "Lounge Chair",
+    id: 3,
+    productName: "Cane Lounge Chair",
+    category: "Lounge",
     imagePath: "/img/lounge-chair.webp",
-    description: "Stylish and comfortable chair",
+    description: "Natural materials paired with a relaxed silhouette.",
+    price: 680,
     views: 85,
   },
   {
-    productName: "King Size Bed",
+    id: 4,
+    productName: "Haven King Bed",
+    category: "Bedroom",
     imagePath: "/img/bed.webp",
-    description: "Modern bed for a perfect rest",
+    description: "An elegant upholstered bed designed for restful nights.",
+    price: 1560,
+    views: 76,
+  },
+  {
+    id: 5,
+    productName: "Haven King Bed",
+    category: "Bedroom",
+    imagePath: "/img/bed.webp",
+    description: "An elegant upholstered bed designed for restful nights.",
+    price: 1560,
     views: 76,
   },
 ];
 
 export default function PopularProducts() {
   return (
-    <div className="popular-products-frame">
-      <Container>
-        <Stack className="popular-section">
-          <Box className="category-title">Popular Products</Box>
+    <section className="popular-products">
+      <Container className="popular-products__container">
+        <Stack className="popular-products__heading">
+          <Box>
+            <Box className="popular-products__eyebrow">Curated collection</Box>
 
-          <Stack className="cards-frame">
-            {list.map((product) => (
-              <CssVarsProvider key={product.productName}>
-                <Card className="card">
+            <Box component="h2" className="popular-products__title">
+              Most-loved <span>pieces</span>
+            </Box>
+          </Box>
+
+          <Box className="popular-products__introduction">
+            Discover furniture chosen for its lasting design, thoughtful
+            craftsmanship, and everyday comfort.
+          </Box>
+        </Stack>
+
+        <CssVarsProvider>
+          {products.length > 0 ? (
+            <Box className="popular-products__grid">
+              {products.map((product, index) => (
+                <Card
+                  key={product.id}
+                  className={`product-card ${
+                    index === 0 ? "product-card--featured" : ""
+                  }`}
+                >
                   <CardCover>
                     <img
                       src={product.imagePath}
@@ -54,62 +103,69 @@ export default function PopularProducts() {
                     />
                   </CardCover>
 
-                  <CardCover className="card-cover" />
+                  <CardCover className="product-card__overlay" />
 
-                  <CardContent sx={{ justifyContent: "flex-end" }}>
-                    <Stack
-                      direction="row"
-                      justifyContent="space-between"
-                      alignItems="center"
-                    >
-                      <Typography
-                        level="h2"
-                        fontSize="lg"
-                        textColor="#fff"
-                        mb={1}
-                      >
-                        {product.productName}
-                      </Typography>
+                  <CardContent className="product-card__content">
+                    <Stack className="product-card__top">
+                      <Box className="product-card__number">
+                        {String(index + 1).padStart(2, "0")}
+                      </Box>
 
-                      <Typography
-                        sx={{
-                          color: "neutral.300",
-                          display: "flex",
-                          alignItems: "center",
-                        }}
-                      >
-                        {product.views}
-
-                        <VisibilityIcon
-                          sx={{ fontSize: 25, marginLeft: "5px" }}
-                        />
-                      </Typography>
+                      <Stack className="product-card__views">
+                        <VisibilityOutlinedIcon />
+                        <span>{product.views}</span>
+                      </Stack>
                     </Stack>
-                  </CardContent>
 
-                  <CardOverflow
-                    sx={{
-                      display: "flex",
-                      gap: 1.5,
-                      py: 1.5,
-                      px: "var(--Card-padding)",
-                      borderTop: "1px solid",
-                      height: "60px",
-                    }}
-                  >
-                    <Typography
-                      startDecorator={<DescriptionOutlinedIcon />}
-                      textColor="neutral.300"
-                    >
-                      {product.description}
-                    </Typography>
-                  </CardOverflow>
+                    <Box className="product-card__information">
+                      <Box className="product-card__category">
+                        {product.category}
+                      </Box>
+
+                      <Stack className="product-card__name-row">
+                        <Typography
+                          component="h3"
+                          className="product-card__name"
+                        >
+                          {product.productName}
+                        </Typography>
+
+                        <Box
+                          component="button"
+                          className="product-card__open-button"
+                          aria-label={`View ${product.productName}`}
+                        >
+                          <ArrowOutwardIcon />
+                        </Box>
+                      </Stack>
+
+                      <Box className="product-card__description">
+                        {product.description}
+                      </Box>
+
+                      <Box className="product-card__divider" />
+
+                      <Stack className="product-card__footer">
+                        <Box className="product-card__price-label">
+                          Starting from
+                        </Box>
+
+                        <Box className="product-card__price">
+                          ${product.price.toLocaleString()}
+                        </Box>
+                      </Stack>
+                    </Box>
+                  </CardContent>
                 </Card>
-              </CssVarsProvider>
-            ))}
-          </Stack>
-        </Stack>
+              ))}
+            </Box>
+          ) : (
+            <Stack className="popular-products__empty">
+              <Box>No popular furniture is available.</Box>
+            </Stack>
+          )}
+        </CssVarsProvider>
       </Container>
-    </div>
+    </section>
   );
 }

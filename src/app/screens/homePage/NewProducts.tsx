@@ -1,37 +1,56 @@
 import { Box, Container, Stack } from "@mui/material";
 import AspectRatio from "@mui/joy/AspectRatio";
 import Card from "@mui/joy/Card";
+import CardContent from "@mui/joy/CardContent";
 import CardOverflow from "@mui/joy/CardOverflow";
-import Typography from "@mui/joy/Typography";
 import { CssVarsProvider } from "@mui/joy/styles";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import Divider from "../../components/divider";
+import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
+import ArrowOutwardIcon from "@mui/icons-material/ArrowOutward";
+import "../../../css/home.css";
 
-const newProducts = [
+interface Product {
+  id: number;
+  productName: string;
+  imagePath: string;
+  category: string;
+  size: string;
+  price: number;
+  views: number;
+}
+
+const newProducts: Product[] = [
   {
-    productName: "Modern Chair",
+    id: 1,
+    productName: "Arco Lounge Chair",
     imagePath: "/img/modern-chair.webp",
+    category: "Lounge",
     size: "Standard size",
     price: 120,
     views: 45,
   },
   {
-    productName: "Wooden Table",
+    id: 2,
+    productName: "Linea Oak Table",
     imagePath: "/img/wooden-table.webp",
+    category: "Dining",
     size: "Large size",
     price: 250,
     views: 32,
   },
   {
-    productName: "Comfort Sofa",
+    id: 3,
+    productName: "Cloud Comfort Sofa",
     imagePath: "/img/comfort-sofa.webp",
+    category: "Living room",
     size: "Three seats",
     price: 480,
     views: 67,
   },
   {
-    productName: "Bedside Table",
+    id: 4,
+    productName: "Noma Bedside Table",
     imagePath: "/img/bedside-table.webp",
+    category: "Bedroom",
     size: "Compact size",
     price: 95,
     views: 28,
@@ -40,65 +59,105 @@ const newProducts = [
 
 export default function NewProducts() {
   return (
-    <div className="new-products-frame">
-      <Container>
-        <Stack className="main">
-          <Box className="category-title">New Products</Box>
+    <section className="new-products">
+      <Container className="new-products__container">
+        <Stack className="new-products__heading">
+          <Box>
+            <Box className="new-products__eyebrow">Just arrived</Box>
 
-          <Stack className="cards-frame">
-            <CssVarsProvider>
-              {newProducts.map((product) => (
+            <Box component="h2" className="new-products__title">
+              New <span>collection</span>
+            </Box>
+          </Box>
+
+          <Box className="new-products__description">
+            Explore our latest furniture, shaped by natural materials,
+            considered details, and timeless design.
+          </Box>
+        </Stack>
+
+        <CssVarsProvider>
+          {newProducts.length > 0 ? (
+            <Box className="new-products__grid">
+              {newProducts.map((product, index) => (
                 <Card
-                  key={product.productName}
+                  key={product.id}
                   variant="outlined"
-                  className="product-card"
+                  className="new-product-card"
                 >
-                  <CardOverflow>
-                    <div className="product-sale">{product.size}</div>
-
-                    <AspectRatio ratio={1}>
+                  <CardOverflow className="new-product-card__media">
+                    <AspectRatio ratio="4/5">
                       <img
                         src={product.imagePath}
                         alt={product.productName}
                         loading="lazy"
                       />
                     </AspectRatio>
-                  </CardOverflow>
 
-                  <CardOverflow variant="soft" className="product-detail">
-                    <Stack
-                      className="info"
-                      direction="row"
-                      alignItems="center"
-                      justifyContent="space-between"
+                    <Box className="new-product-card__label">New</Box>
+
+                    <Box className="new-product-card__number">
+                      {String(index + 1).padStart(2, "0")}
+                    </Box>
+
+                    <Box
+                      component="button"
+                      type="button"
+                      className="new-product-card__open"
+                      aria-label={`View ${product.productName}`}
                     >
-                      <Stack direction="row" alignItems="center" spacing={1.5}>
-                        <Typography className="title">
-                          {product.productName}
-                        </Typography>
-
-                        <Divider width={2} height={24} bg="#d9d9d9" />
-
-                        <Typography className="price">
-                          ${product.price}
-                        </Typography>
-                      </Stack>
-
-                      <Typography className="views">
-                        {product.views}
-
-                        <VisibilityIcon
-                          sx={{ fontSize: 20, marginLeft: "5px" }}
-                        />
-                      </Typography>
-                    </Stack>
+                      <ArrowOutwardIcon />
+                    </Box>
                   </CardOverflow>
+
+                  <CardContent className="new-product-card__content">
+                    <Stack className="new-product-card__metadata">
+                      <Box className="new-product-card__category">
+                        {product.category}
+                      </Box>
+
+                      <Stack className="new-product-card__views">
+                        <VisibilityOutlinedIcon />
+                        <span>{product.views}</span>
+                      </Stack>
+                    </Stack>
+
+                    <Box component="h3" className="new-product-card__name">
+                      {product.productName}
+                    </Box>
+
+                    <Stack className="new-product-card__footer">
+                      <Box>
+                        <Box className="new-product-card__size">
+                          {product.size}
+                        </Box>
+
+                        <Box className="new-product-card__availability">
+                          Ready to order
+                        </Box>
+                      </Box>
+
+                      <Box className="new-product-card__price">
+                        ${product.price.toLocaleString()}
+                      </Box>
+                    </Stack>
+                  </CardContent>
                 </Card>
               ))}
-            </CssVarsProvider>
-          </Stack>
-        </Stack>
+            </Box>
+          ) : (
+            <Stack className="new-products__empty">
+              <Box className="new-products__empty-title">
+                New products are coming soon
+              </Box>
+
+              <Box className="new-products__empty-text">
+                Check back soon to discover our newest furniture collection.
+              </Box>
+            </Stack>
+          )}
+        </CssVarsProvider>
       </Container>
-    </div>
+    </section>
   );
 }
