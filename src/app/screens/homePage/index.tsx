@@ -1,4 +1,3 @@
-import ActiveUsers from "./ActiveUsers";
 import Advertisement from "./Advertisement";
 import Events from "./Events";
 import NewDishes from "./NewProducts";
@@ -13,7 +12,6 @@ export default function HomePage() {
       <PopularDishes />
       <NewDishes />
       <Advertisement />
-      <ActiveUsers />
       <Events />
     </div>
   );
