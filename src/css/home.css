@@ -2,3 +2,64 @@
   width: 100%;
   height: auto;
 }
+
+/* STATISTICS */
+
+.static-frame {
+  width: 100%;
+  padding: 60px 0;
+  background-color: #1f1f1f;
+}
+
+.info {
+  display: flex;
+  flex-direction: row !important;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.static-box {
+  flex: 1;
+  align-items: center;
+  text-align: center;
+}
+
+.static-num {
+  color: #e3c08d;
+  font-size: 42px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.static-text {
+  margin-top: 8px;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+@media (max-width: 600px) {
+  .static-frame {
+    padding: 40px 0;
+  }
+
+  .info {
+    flex-direction: column !important;
+    gap: 28px;
+  }
+
+  .static-num {
+    font-size: 34px;
+  }
+
+  .static-text {
+    font-size: 14px;
+  }
+
+  .info > span {
+    width: 64px;
+    min-width: 64px;
+    height: 2px;
+    min-height: 2px;
+  }
+}
