@@ -1,48 +1,57 @@
-export const ProductSize = {
-  COMPACT: "COMPACT",
-  STANDARD: "STANDARD",
-  LARGE: "LARGE",
-  MODULAR: "MODULAR",
-  SET: "SET",
-} as const;
-
-export type ProductSize = (typeof ProductSize)[keyof typeof ProductSize];
-
-export const ProductMaterial = {
-  SOLID_WOOD: "SOLID_WOOD",
-  VENEER: "VENEER",
-  METAL: "METAL",
-  GLASS: "GLASS",
-  STONE: "STONE",
-  FABRIC: "FABRIC",
-  LEATHER: "LEATHER",
-  RATTAN: "RATTAN",
-  MIXED: "MIXED",
-} as const;
-
-export type ProductMaterial =
-  (typeof ProductMaterial)[keyof typeof ProductMaterial];
-
 export const ProductStatus = {
-  ACTIVE: "ACTIVE",
-  OUT_OF_STOCK: "OUT_OF_STOCK",
-  PAUSED: "PAUSED",
-  DISCONTINUED: "DISCONTINUED",
-  DELETED: "DELETED",
+  PAUSE: "PAUSE",
+  PROCESS: "PROCESS",
+  DELETE: "DELETE",
 } as const;
 
 export type ProductStatus = (typeof ProductStatus)[keyof typeof ProductStatus];
 
-export const ProductCollection = {
-  LIVING_ROOM: "LIVING_ROOM",
-  DINING_ROOM: "DINING_ROOM",
-  BEDROOM: "BEDROOM",
-  HOME_OFFICE: "HOME_OFFICE",
-  OUTDOOR: "OUTDOOR",
-  LIGHTING: "LIGHTING",
+export const ProductCategories = {
+  SOFAS: "SOFAS",
+  CHAIRS: "CHAIRS",
+  TABLES: "TABLES",
+  BEDS: "BEDS",
+  WARDROBES: "WARDROBES",
+  BOOKSHELVES: "BOOKSHELVES",
+  DESKS: "DESKS",
   DECOR: "DECOR",
+  LIGHTING: "LIGHTING",
   OTHER: "OTHER",
 } as const;
 
-export type ProductCollection =
-  (typeof ProductCollection)[keyof typeof ProductCollection];
+export type ProductCategories =
+  (typeof ProductCategories)[keyof typeof ProductCategories];
+
+export const ProductColor = {
+  BLACK: "BLACK",
+  WHITE: "WHITE",
+  GRAY: "GRAY",
+  BROWN: "BROWN",
+  NAVY: "NAVY",
+  RED: "RED",
+  GOLD: "GOLD",
+  SILVER: "SILVER",
+  PINK: "PINK",
+  GREEN: "GREEN",
+  BEIGE: "BEIGE",
+  CREAM: "CREAM",
+  WALNUT: "WALNUT",
+  OAK: "OAK",
+  NATURAL_WOOD: "NATURAL_WOOD",
+} as const;
+
+export type ProductColor = (typeof ProductColor)[keyof typeof ProductColor];
+
+export const ProductMaterial = {
+  WOOD: "WOOD",
+  METAL: "METAL",
+  GLASS: "GLASS",
+  FABRIC: "FABRIC",
+  LEATHER: "LEATHER",
+  RATTAN: "RATTAN",
+  PLASTIC: "PLASTIC",
+  VELVET: "VELVET",
+} as const;
+
+export type ProductMaterial =
+  (typeof ProductMaterial)[keyof typeof ProductMaterial];

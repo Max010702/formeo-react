@@ -8,7 +8,7 @@ export const retrievePopularProducts = createSelector(
   (HomePage) => HomePage.popularProducts,
 );
 
-export const retrieveNewProductss = createSelector(
+export const retrieveNewProducts = createSelector(
   selectHomePage,
   (HomePage) => HomePage.newProducts,
 );

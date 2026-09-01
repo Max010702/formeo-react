@@ -1,29 +1,20 @@
 import type {
-  ProductCollection,
+  ProductCategories,
+  ProductColor,
   ProductMaterial,
-  ProductSize,
   ProductStatus,
 } from "../enums/product.enum";
 
-export interface ProductDimensions {
-  width: number;
-  depth: number;
-  height: number;
-  weight?: number;
-  unit: "CM" | "IN";
-}
-
 export interface Product {
+  productCollection: any;
   _id: string;
   productStatus: ProductStatus;
-  productCollection: ProductCollection;
+  productCategories: ProductCategories;
   productName: string;
   productPrice: number;
   productLeftCount: number;
-  productSize: ProductSize;
+  productColor: ProductColor;
   productMaterial: ProductMaterial;
-  productDimensions: ProductDimensions;
-  productColor?: string;
   productDesc?: string;
   productImages: string[];
   productView: number;
@@ -35,10 +26,8 @@ export interface ProductInquiry {
   order: string;
   page: number;
   limit: number;
-  productCollection?: ProductCollection;
+  productCategories?: ProductCategories;
+  productColor?: ProductColor;
   productMaterial?: ProductMaterial;
-  productSize?: ProductSize;
-  minimumPrice?: number;
-  maximumPrice?: number;
   search?: string;
 }

@@ -26,7 +26,7 @@ const popularProductsRetriever = createSelector(
 );
 
 export default function HomePage() {
-  const { setPopularProducts } = actionDispatch(useDispatch());
+  const { setPopularProducts, setNewProducts } = actionDispatch(useDispatch());
 
   useEffect(() => {
     // Backend server data fetch => Data
@@ -40,6 +40,18 @@ export default function HomePage() {
       })
       .then((data) => {
         setPopularProducts(data);
+      })
+      .catch((err) => console.log(err));
+
+    product
+      .getProducts({
+        page: 1,
+        limit: 4,
+        order: "createdAt",
+        // productCollection: ProductCollection.DISH,
+      })
+      .then((data) => {
+        setNewProducts(data);
       })
       .catch((err) => console.log(err));
   }, []);

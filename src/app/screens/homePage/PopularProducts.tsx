@@ -51,7 +51,10 @@ export default function PopularProducts() {
                 const collection = product.productCollection
                   .toLowerCase()
                   .split("_")
-                  .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                  .map(
+                    (word: string) =>
+                      word.charAt(0).toUpperCase() + word.slice(1),
+                  )
                   .join(" ");
 
                 return (
