@@ -9,18 +9,18 @@ import ArrowOutwardIcon from "@mui/icons-material/ArrowOutward";
 
 import { useSelector } from "react-redux";
 import { createSelector } from "reselect";
-import { retrievePopularDishes } from "./selector";
+import { retrievePopularProducts } from "./selector";
 import { serverApi } from "../../lib/config";
 import type { Product } from "../..//lib/types/product";
 
 /** REDUX SLICE & SELECTOR */
-const popularDishesRetriever = createSelector(
-  retrievePopularDishes,
-  (popularDishes) => ({ popularDishes }),
+const popularProductsRetriever = createSelector(
+  retrievePopularProducts,
+  (popularProducts) => ({ popularProducts }),
 );
 
 export default function PopularProducts() {
-  const { popularDishes } = useSelector(popularDishesRetriever);
+  const { popularProducts } = useSelector(popularProductsRetriever);
 
   return (
     <section className="popular-products">
@@ -41,9 +41,9 @@ export default function PopularProducts() {
         </Stack>
 
         <CssVarsProvider>
-          {popularDishes.length > 0 ? (
+          {popularProducts.length > 0 ? (
             <Box className="popular-products__grid">
-              {popularDishes.map((product: Product, index: number) => {
+              {popularProducts.map((product: Product, index: number) => {
                 const imagePath = product.productImages?.[0]
                   ? `${serverApi}/${product.productImages[0]}`
                   : "/images/product-placeholder.webp";

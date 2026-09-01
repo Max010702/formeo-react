@@ -1,7 +1,6 @@
 import Advertisement from "./Advertisement";
 import Events from "./Events";
-import NewDishes from "./NewProducts";
-import PopularDishes from "./PopularProducts";
+import PopularProducts from "./PopularProducts";
 import Statistics from "./Statistic";
 import "../../../css/home.css";
 import { useEffect } from "react";
@@ -9,24 +8,25 @@ import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { type Dispatch } from "@reduxjs/toolkit";
 import { createSelector } from "reselect";
-import { setPopularDishes } from "./slice";
-import type { Product } from "../../../lib/types/product";
-import { retrievePopularDishes } from "./selector";
+import { setNewProducts, setPopularProducts } from "./slice";
+import type { Product } from "../../lib/types/product";
+import { retrievePopularProducts } from "./selector";
 import ProductService from "../../services/ProductService";
-import { ProductCollection } from "../../lib/enums/product.enum";
+import NewProducts from "./NewProducts";
 
 /** REDUX SLICE % SELECTOR */
 const actionDispatch = (dispatch: Dispatch) => ({
-  setPopularDishes: (data: Product[]) => dispatch(setPopularDishes(data)),
+  setPopularProducts: (data: Product[]) => dispatch(setPopularProducts(data)),
+  setNewProducts: (data: Product[]) => dispatch(setNewProducts(data)),
 });
 
-const popularDishesRetriever = createSelector(
-  retrievePopularDishes,
-  (popularDishes) => ({ popularDishes }),
+const popularProductsRetriever = createSelector(
+  retrievePopularProducts,
+  (popularProducts) => ({ popularProducts }),
 );
 
 export default function HomePage() {
-  const { setPopularDishes } = actionDispatch(useDispatch());
+  const { setPopularProducts } = actionDispatch(useDispatch());
 
   useEffect(() => {
     // Backend server data fetch => Data
@@ -36,10 +36,10 @@ export default function HomePage() {
         page: 1,
         limit: 4,
         order: "productViews",
-        productCollection: ProductCollection.DISH,
+        // productCollection: ProductCollection.DISH,
       })
       .then((data) => {
-        setPopularDishes(data);
+        setPopularProducts(data);
       })
       .catch((err) => console.log(err));
   }, []);
@@ -47,8 +47,8 @@ export default function HomePage() {
   return (
     <div className={"homepage"}>
       <Statistics />
-      <PopularDishes />
-      <NewDishes />
+      <PopularProducts />
+      <NewProducts />
       <Advertisement />
       <Events />
     </div>
