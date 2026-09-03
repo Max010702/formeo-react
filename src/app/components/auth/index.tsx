@@ -7,7 +7,6 @@ import {
   Modal,
   Stack,
   TextField,
-  Typography,
 } from "@mui/material";
 import LoginIcon from "@mui/icons-material/Login";
 import PersonAddAltIcon from "@mui/icons-material/PersonAddAlt";
@@ -21,15 +20,15 @@ const modalStyle = {
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  p: 2,
+  padding: "16px",
 };
 
 const paperStyle = {
-  width: "min(820px, 100%)",
+  width: "min(800px, 100%)",
   maxHeight: "90vh",
   overflow: "auto",
-  bgcolor: "#fffdf9",
-  borderRadius: "24px",
+  backgroundColor: "#fffdf9",
+  borderRadius: "20px",
   boxShadow: "0 30px 80px rgba(33, 26, 21, 0.3)",
   outline: "none",
 };
@@ -72,7 +71,12 @@ export default function AuthenticationModal({
 
   const handleSignupRequest = async () => {
     try {
-      if (!memberNick.trim() || !memberPhone.trim() || !memberPassword.trim()) {
+      const isFulfilled =
+        memberNick.trim() !== "" &&
+        memberPhone.trim() !== "" &&
+        memberPassword.trim() !== "";
+
+      if (!isFulfilled) {
         throw new Error(Messages.error3);
       }
 
@@ -98,7 +102,10 @@ export default function AuthenticationModal({
 
   const handleLoginRequest = async () => {
     try {
-      if (!memberNick.trim() || !memberPassword.trim()) {
+      const isFulfilled =
+        memberNick.trim() !== "" && memberPassword.trim() !== "";
+
+      if (!isFulfilled) {
         throw new Error(Messages.error3);
       }
 
@@ -126,9 +133,7 @@ export default function AuthenticationModal({
 
     if (signupOpen) {
       void handleSignupRequest();
-    }
-
-    if (loginOpen) {
+    } else if (loginOpen) {
       void handleLoginRequest();
     }
   };
@@ -164,23 +169,24 @@ export default function AuthenticationModal({
 
             <Stack
               justifyContent="center"
-              sx={{ flex: 1, p: { xs: 3, md: 5 } }}
+              sx={{
+                flex: 1,
+                padding: { xs: 3, md: 5 },
+              }}
             >
-              <Typography
+              <Box
                 id="signup-modal-title"
                 component="h2"
                 sx={{
+                  margin: 0,
+                  marginBottom: 3,
                   fontFamily: "Georgia, serif",
-                  fontSize: "2.25rem",
+                  fontSize: "2rem",
                   color: "#211a15",
                 }}
               >
                 Create Account
-              </Typography>
-
-              <Typography sx={{ mt: 1, mb: 3, color: "#796b5f" }}>
-                Join Formeo and discover premium furniture.
-              </Typography>
+              </Box>
 
               <Stack spacing={2}>
                 <TextField
@@ -219,7 +225,7 @@ export default function AuthenticationModal({
                 startIcon={<PersonAddAltIcon />}
                 disabled={loading}
                 onClick={() => void handleSignupRequest()}
-                sx={{ mt: 3, minHeight: 50 }}
+                sx={{ marginTop: 3, minHeight: 50 }}
               >
                 {loading ? "Please wait..." : "Sign Up"}
               </Button>
@@ -244,7 +250,10 @@ export default function AuthenticationModal({
         <Fade in={loginOpen}>
           <Stack
             direction={{ xs: "column", md: "row" }}
-            sx={{ ...paperStyle, width: "min(760px, 100%)" }}
+            sx={{
+              ...paperStyle,
+              width: "min(700px, 100%)",
+            }}
           >
             <Box
               component="img"
@@ -252,7 +261,7 @@ export default function AuthenticationModal({
               alt="Furniture interior"
               sx={{
                 width: { xs: "100%", md: "50%" },
-                minHeight: { xs: 220, md: 460 },
+                minHeight: { xs: 220, md: 450 },
                 maxHeight: { xs: 250, md: "none" },
                 objectFit: "cover",
               }}
@@ -260,23 +269,24 @@ export default function AuthenticationModal({
 
             <Stack
               justifyContent="center"
-              sx={{ flex: 1, p: { xs: 3, md: 5 } }}
+              sx={{
+                flex: 1,
+                padding: { xs: 3, md: 5 },
+              }}
             >
-              <Typography
+              <Box
                 id="login-modal-title"
                 component="h2"
                 sx={{
+                  margin: 0,
+                  marginBottom: 3,
                   fontFamily: "Georgia, serif",
-                  fontSize: "2.25rem",
+                  fontSize: "2rem",
                   color: "#211a15",
                 }}
               >
                 Welcome Back
-              </Typography>
-
-              <Typography sx={{ mt: 1, mb: 3, color: "#796b5f" }}>
-                Log in to continue shopping.
-              </Typography>
+              </Box>
 
               <Stack spacing={2}>
                 <TextField
@@ -305,7 +315,7 @@ export default function AuthenticationModal({
                 startIcon={<LoginIcon />}
                 disabled={loading}
                 onClick={() => void handleLoginRequest()}
-                sx={{ mt: 3, minHeight: 50 }}
+                sx={{ marginTop: 3, minHeight: 50 }}
               >
                 {loading ? "Please wait..." : "Login"}
               </Button>
