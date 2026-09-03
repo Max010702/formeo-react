@@ -1,189 +1,159 @@
 import { useState, type SyntheticEvent } from "react";
 import { Box, Container, Stack, Tab, Tabs } from "@mui/material";
 import TabContext from "@mui/lab/TabContext";
-import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
-import CreditCardOutlinedIcon from "@mui/icons-material/CreditCardOutlined";
-import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined";
-import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
-import ScheduleOutlinedIcon from "@mui/icons-material/ScheduleOutlined";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
 
 import PausedOrders from "./PausedOrders";
-import ProcessOrders from "./PausedOrders";
+import ProcessOrders from "./ProcessOrders";
 import FinishedOrders from "./FinishedOrders";
+import { useGlobals } from "../../hooks/useGlobals";
+import { serverApi } from "../../lib/config";
+
 import "../../../css/order.css";
 
 export default function OrdersPage() {
   const [value, setValue] = useState("1");
+  const { authMember } = useGlobals();
 
   const handleChange = (_event: SyntheticEvent, newValue: string) => {
     setValue(newValue);
   };
 
+  const memberImage = authMember?.memberImage
+    ? authMember.memberImage.startsWith("http")
+      ? authMember.memberImage
+      : `${serverApi}/${authMember.memberImage}`
+    : "/icons/default-user.svg";
+
   return (
-    <main className="orders-page">
-      <section className="orders-page__header">
-        <Container className="orders-page__container">
-          <Box className="orders-page__eyebrow">Your account</Box>
-
-          <Box component="h1" className="orders-page__title">
-            Furniture <span>orders</span>
-          </Box>
-
-          <Box className="orders-page__description">
-            Follow your furniture from confirmation and preparation through to
-            delivery and installation.
-          </Box>
-        </Container>
-      </section>
-
-      <Container className="orders-page__container">
-        <Box className="orders-page__layout">
-          <Box className="orders-page__content">
-            <TabContext value={value}>
-              <Box className="orders-page__navigation">
+    <main className="order-page">
+      <Container className="order-container">
+        <Stack className="order-left">
+          <TabContext value={value}>
+            <Box className="order-nav-frame">
+              <Box
+                sx={{
+                  borderBottom: 1,
+                  borderColor: "divider",
+                }}
+              >
                 <Tabs
                   value={value}
                   onChange={handleChange}
-                  aria-label="Order status"
-                  className="orders-page__tabs"
-                  variant="scrollable"
-                  scrollButtons="auto"
+                  aria-label="Order categories"
+                  className="table_list"
                 >
-                  <Tab
-                    value="1"
-                    icon={<ScheduleOutlinedIcon />}
-                    iconPosition="start"
-                    label="Pending"
-                  />
+                  <Tab label="PAUSED ORDERS" value="1" />
 
-                  <Tab
-                    value="2"
-                    icon={<LocalShippingOutlinedIcon />}
-                    iconPosition="start"
-                    label="In progress"
-                  />
+                  <Tab label="PROCESS ORDERS" value="2" />
 
-                  <Tab
-                    value="3"
-                    icon={<CheckCircleOutlineIcon />}
-                    iconPosition="start"
-                    label="Completed"
-                  />
+                  <Tab label="FINISHED ORDERS" value="3" />
                 </Tabs>
               </Box>
+            </Box>
 
-              <Stack className="orders-page__main-content">
-                <PausedOrders />
-                <ProcessOrders />
-                <FinishedOrders />
-              </Stack>
-            </TabContext>
+            <Stack className="order-main-content">
+              <PausedOrders />
+              <ProcessOrders />
+              <FinishedOrders />
+            </Stack>
+          </TabContext>
+        </Stack>
+
+        <Stack className="order-right">
+          <Box className="order-info-box">
+            <Box className="member-box">
+              <Box className="order-user-img">
+                <img
+                  src={memberImage}
+                  className="order-user-avatar"
+                  alt={authMember?.memberNick || "User profile"}
+                />
+
+                <Box className="order-user-icon-box">
+                  <img
+                    src="/icons/user-badge.svg"
+                    className="order-user-prof-img"
+                    alt=""
+                  />
+                </Box>
+              </Box>
+
+              <span className="order-user-name">
+                {authMember?.memberNick || "User"}
+              </span>
+
+              <span className="order-user-prof">
+                {authMember?.memberType || "USER"}
+              </span>
+            </Box>
+
+            <Box className="liner" />
+
+            <Box className="order-user-address">
+              <Box display="flex">
+                <LocationOnIcon />
+              </Box>
+
+              <Box className="spec-address-txt">
+                {authMember?.memberAddress || "No address"}
+              </Box>
+            </Box>
           </Box>
 
-          <Stack className="orders-page__sidebar">
-            <Box className="orders-profile">
-              <Stack className="orders-profile__heading">
-                <Box className="orders-profile__avatar-wrapper">
-                  <img
-                    src="/icons/default-user.svg"
-                    className="orders-profile__avatar"
-                    alt="Martin"
-                  />
+          <Box className="order-info-box" sx={{ mt: "15px" }}>
+            <input
+              type="text"
+              name="cardNumber"
+              placeholder="Card number: **** 4090 2002 7495"
+              className="card-input"
+              autoComplete="cc-number"
+            />
 
-                  <Box className="orders-profile__status" />
-                </Box>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                gap: 2,
+              }}
+            >
+              <input
+                type="text"
+                name="cardPeriod"
+                placeholder="MM / YY"
+                className="card-half-input"
+                autoComplete="cc-exp"
+              />
 
-                <Box>
-                  <Box className="orders-profile__eyebrow">Member account</Box>
-                  <Box className="orders-profile__name">Martin</Box>
-                  <Box className="orders-profile__role">Private customer</Box>
-                </Box>
-              </Stack>
-
-              <Box className="orders-profile__divider" />
-
-              <Stack className="orders-profile__information">
-                <Stack className="orders-profile__information-row">
-                  <LocationOnOutlinedIcon />
-
-                  <Box>
-                    <span>Delivery address</span>
-                    <strong>Address has not been added</strong>
-                  </Box>
-
-                  <button type="button" aria-label="Edit delivery address">
-                    <EditOutlinedIcon />
-                  </button>
-                </Stack>
-              </Stack>
+              <input
+                type="password"
+                name="cardCVV"
+                placeholder="CVV"
+                className="card-half-input"
+                autoComplete="cc-csc"
+                maxLength={4}
+              />
             </Box>
 
-            <Box className="orders-payment">
-              <Stack className="orders-payment__heading">
-                <Box>
-                  <Box className="orders-payment__eyebrow">Payment method</Box>
+            <input
+              type="text"
+              name="cardCreator"
+              placeholder="Cardholder name"
+              className="card-input"
+              autoComplete="cc-name"
+            />
 
-                  <Box className="orders-payment__title">Saved payment</Box>
-                </Box>
+            <Box className="cards-box">
+              <img src="/icons/western-card.svg" alt="Western Union" />
 
-                <CreditCardOutlinedIcon />
-              </Stack>
+              <img src="/icons/master-card.svg" alt="Mastercard" />
 
-              <Box className="orders-payment__card">
-                <Stack className="orders-payment__card-top">
-                  <span>FORMA</span>
-                  <CreditCardOutlinedIcon />
-                </Stack>
+              <img src="/icons/paypal-card.svg" alt="PayPal" />
 
-                <Box className="orders-payment__number">
-                  •••• &nbsp;•••• &nbsp;•••• &nbsp;4090
-                </Box>
-
-                <Stack className="orders-payment__card-bottom">
-                  <Box>
-                    <span>Cardholder</span>
-                    <strong>Martin Robertson</strong>
-                  </Box>
-
-                  <Box>
-                    <span>Expires</span>
-                    <strong>07/29</strong>
-                  </Box>
-                </Stack>
-              </Box>
-
-              <button type="button" className="orders-payment__change">
-                <EditOutlinedIcon />
-                Change payment method
-              </button>
-
-              <Stack className="orders-payment__security">
-                <LockOutlinedIcon />
-
-                <span>
-                  Your payment information is encrypted and securely stored.
-                </span>
-              </Stack>
+              <img src="/icons/visa-card.svg" alt="Visa" />
             </Box>
-
-            <Box className="orders-support">
-              <Box className="orders-support__eyebrow">Need assistance?</Box>
-
-              <Box className="orders-support__title">We are here to help.</Box>
-
-              <Box className="orders-support__description">
-                Contact our team for help with delivery, assembly, returns, or
-                your furniture order.
-              </Box>
-
-              <button type="button" className="orders-support__button">
-                Contact support
-              </button>
-            </Box>
-          </Stack>
-        </Box>
+          </Box>
+        </Stack>
       </Container>
     </main>
   );
