@@ -12,6 +12,8 @@ interface HomeNavbarProps {
   onDelete: (item: CartItem) => void;
   onDeleteAll: () => void;
   onOrder: () => void;
+  handleLoginOpen: () => void;
+  handleSignupOpen: () => void;
 }
 
 export default function HomeNavbar({
@@ -21,11 +23,12 @@ export default function HomeNavbar({
   onDelete,
   onDeleteAll,
   onOrder,
+  handleLoginOpen,
+  handleSignupOpen,
 }: HomeNavbarProps) {
   const authMember = null;
 
-  const [serviceHours, setServiceHours] = useState(0);
-  const [showSignupMessage, setShowSignupMessage] = useState(false);
+  const [serviceHours, setServiceHours] = useState<number>(0);
 
   useEffect(() => {
     const intervalId = window.setInterval(() => {
@@ -44,16 +47,12 @@ export default function HomeNavbar({
     };
   }, []);
 
-  const signupHandler = () => {
-    setShowSignupMessage((currentValue) => !currentValue);
-  };
-
   return (
     <header className="home-navbar">
       <Container className="navbar-container">
         <Stack className="menu">
           <Box className="brand">
-            <NavLink to="/" aria-label="Go to home page">
+            <NavLink exact to="/" aria-label="Go to home page">
               <img
                 className="brand-logo"
                 src="/icons/burak.svg"
@@ -107,7 +106,11 @@ export default function HomeNavbar({
             />
 
             {!authMember ? (
-              <Button variant="contained" className="login-button">
+              <Button
+                variant="contained"
+                className="login-button"
+                onClick={handleLoginOpen}
+              >
                 Login
               </Button>
             ) : (
@@ -143,16 +146,10 @@ export default function HomeNavbar({
                 <Button
                   variant="contained"
                   className="signup-button"
-                  onClick={signupHandler}
+                  onClick={handleSignupOpen}
                 >
-                  Explore Collection
+                  Sign Up
                 </Button>
-
-                {showSignupMessage && (
-                  <Box className="signup-message">
-                    Create an account to save your favorite furniture.
-                  </Box>
-                )}
               </Box>
             )}
           </Stack>

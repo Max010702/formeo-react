@@ -1,7 +1,9 @@
+import { useState } from "react";
 import { Route, Switch, useHistory, useLocation } from "react-router-dom";
 
 import HomeNavbar from "./components/headers/HomeNavbar";
 import OtherNavbar from "./components/headers/OtherNavbar";
+import AuthenticationModal from "./components/auth";
 import Footer from "./components/footer";
 import HomePage from "./screens/homePage";
 import ProductsPage from "./screens/productsPage";
@@ -20,6 +22,28 @@ function App() {
 
   const { cartItems, onAdd, onRemove, onDelete, onDeleteAll } = useBasket();
 
+  const [signupOpen, setSignupOpen] = useState(false);
+
+  const [loginOpen, setLoginOpen] = useState(false);
+
+  const handleSignupOpen = () => {
+    setLoginOpen(false);
+    setSignupOpen(true);
+  };
+
+  const handleSignupClose = () => {
+    setSignupOpen(false);
+  };
+
+  const handleLoginOpen = () => {
+    setSignupOpen(false);
+    setLoginOpen(true);
+  };
+
+  const handleLoginClose = () => {
+    setLoginOpen(false);
+  };
+
   const onOrder = () => {
     if (cartItems.length === 0) return;
 
@@ -33,12 +57,13 @@ function App() {
     onDelete,
     onDeleteAll,
     onOrder,
+    handleLoginOpen,
   };
 
   return (
     <>
       {location.pathname === "/" ? (
-        <HomeNavbar {...navbarProps} />
+        <HomeNavbar {...navbarProps} handleSignupOpen={handleSignupOpen} />
       ) : (
         <OtherNavbar {...navbarProps} />
       )}
@@ -66,6 +91,13 @@ function App() {
       </Switch>
 
       <Footer />
+
+      <AuthenticationModal
+        signupOpen={signupOpen}
+        loginOpen={loginOpen}
+        handleSignupClose={handleSignupClose}
+        handleLoginClose={handleLoginClose}
+      />
     </>
   );
 }
