@@ -11,6 +11,7 @@ interface OtherNavbarProps {
   onDelete: (item: CartItem) => void;
   onDeleteAll: () => void;
   onOrder: () => void;
+  handleLoginOpen: () => void;
 }
 
 export default function OtherNavbar({
@@ -20,6 +21,7 @@ export default function OtherNavbar({
   onDelete,
   onDeleteAll,
   onOrder,
+  handleLoginOpen,
 }: OtherNavbarProps) {
   const authMember = null;
 
@@ -28,7 +30,7 @@ export default function OtherNavbar({
       <Container className="navbar-container">
         <Stack className="menu">
           <Box className="brand">
-            <NavLink to="/" aria-label="Go to home page">
+            <NavLink exact to="/" aria-label="Go to home page">
               <img
                 className="brand-logo"
                 src="/icons/burak.svg"
@@ -82,7 +84,11 @@ export default function OtherNavbar({
             />
 
             {!authMember ? (
-              <Button variant="contained" className="login-button">
+              <Button
+                variant="contained"
+                className="login-button"
+                onClick={handleLoginOpen}
+              >
                 Login
               </Button>
             ) : (

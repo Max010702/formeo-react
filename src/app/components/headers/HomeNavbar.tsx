@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { Box, Button, Container, Stack } from "@mui/material";
 import { NavLink } from "react-router-dom";
 
@@ -12,8 +11,8 @@ interface HomeNavbarProps {
   onDelete: (item: CartItem) => void;
   onDeleteAll: () => void;
   onOrder: () => void;
-  handleLoginOpen: () => void;
   handleSignupOpen: () => void;
+  handleLoginOpen: () => void;
 }
 
 export default function HomeNavbar({
@@ -23,29 +22,10 @@ export default function HomeNavbar({
   onDelete,
   onDeleteAll,
   onOrder,
-  handleLoginOpen,
   handleSignupOpen,
+  handleLoginOpen,
 }: HomeNavbarProps) {
   const authMember = null;
-
-  const [serviceHours, setServiceHours] = useState<number>(0);
-
-  useEffect(() => {
-    const intervalId = window.setInterval(() => {
-      setServiceHours((currentHours) => {
-        if (currentHours >= 24) {
-          window.clearInterval(intervalId);
-          return 24;
-        }
-
-        return currentHours + 1;
-      });
-    }, 50);
-
-    return () => {
-      window.clearInterval(intervalId);
-    };
-  }, []);
 
   return (
     <header className="home-navbar">
@@ -138,7 +118,7 @@ export default function HomeNavbar({
             </Box>
 
             <Box className="service-txt">
-              Customer service available {serviceHours} hours
+              Premium support and secure delivery
             </Box>
 
             {!authMember && (

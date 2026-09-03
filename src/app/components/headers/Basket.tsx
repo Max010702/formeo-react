@@ -13,7 +13,7 @@ interface BasketProps {
   onRemove: (item: CartItem) => void;
   onDelete: (item: CartItem) => void;
   onDeleteAll: () => void;
-  onOrder?: () => void;
+  onOrder: () => void;
 }
 
 export default function Basket({
@@ -53,8 +53,8 @@ export default function Basket({
   const handleOrder = () => {
     if (cartItems.length === 0) return;
 
-    onOrder?.();
     handleClose();
+    onOrder();
   };
 
   return (
@@ -129,7 +129,7 @@ export default function Basket({
                 <IconButton
                   size="small"
                   color="primary"
-                  aria-label="Delete all cart items"
+                  aria-label="Delete all cart products"
                   onClick={onDeleteAll}
                 >
                   <DeleteForeverIcon />
@@ -148,11 +148,11 @@ export default function Basket({
                       : `${serverApi}/${item.image}`;
 
                     return (
-                      <Box key={item._id} className="basket-info-box">
+                      <Box className="basket-info-box" key={item._id}>
                         <IconButton
                           size="small"
                           className="cancel-btn"
-                          aria-label={`Remove ${item.name}`}
+                          aria-label={`Delete ${item.name}`}
                           onClick={() => onDelete(item)}
                         >
                           <CancelIcon color="primary" />
@@ -176,7 +176,7 @@ export default function Basket({
                           <button
                             type="button"
                             className="remove"
-                            aria-label={`Decrease ${item.name} quantity`}
+                            aria-label={`Decrease ${item.name}`}
                             onClick={() => onRemove(item)}
                           >
                             −
@@ -187,7 +187,7 @@ export default function Basket({
                           <button
                             type="button"
                             className="add"
-                            aria-label={`Increase ${item.name} quantity`}
+                            aria-label={`Increase ${item.name}`}
                             onClick={() => onAdd(item)}
                           >
                             +

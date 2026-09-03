@@ -22,9 +22,9 @@ function App() {
 
   const { cartItems, onAdd, onRemove, onDelete, onDeleteAll } = useBasket();
 
-  const [signupOpen, setSignupOpen] = useState(false);
+  const [signupOpen, setSignupOpen] = useState<boolean>(false);
 
-  const [loginOpen, setLoginOpen] = useState(false);
+  const [loginOpen, setLoginOpen] = useState<boolean>(false);
 
   const handleSignupOpen = () => {
     setLoginOpen(false);

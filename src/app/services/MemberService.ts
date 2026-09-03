@@ -1,12 +1,32 @@
 import axios from "axios";
 import { serverApi } from "../lib/config";
-import type { Member } from "../lib/types/member";
+import type { LoginInput, Member, MemberInput } from "../lib/types/member";
 
 class MemberService {
   private readonly path: string;
 
   constructor() {
     this.path = serverApi;
+  }
+
+  public async signup(input: MemberInput): Promise<Member> {
+    const response = await axios.post<Member>(
+      `${this.path}/member/signup`,
+      input,
+      { withCredentials: true },
+    );
+
+    return response.data;
+  }
+
+  public async login(input: LoginInput): Promise<Member> {
+    const response = await axios.post<Member>(
+      `${this.path}/member/login`,
+      input,
+      { withCredentials: true },
+    );
+
+    return response.data;
   }
 
   public async getTopUsers(): Promise<Member[]> {
