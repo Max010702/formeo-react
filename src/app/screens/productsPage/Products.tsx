@@ -14,14 +14,15 @@ import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import ArrowOutwardIcon from "@mui/icons-material/ArrowOutward";
-import "../../../css/products.css";
-
+import { useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { createSelector } from "reselect";
+
+import "../../../css/products.css";
 import { setProducts } from "./slice";
 import { retrieveProducts } from "./selector";
 import { serverApi } from "../../lib/config";
-import type { Product } from "../../lib/types/product";
+import type { Product, ProductInquiry } from "../../lib/types/product";
 import {
   ProductCategories,
   type ProductCategories as ProductCategoriesType,
@@ -50,14 +51,30 @@ const categories: Category[] = [
   ProductCategories.OTHER,
 ];
 
-const formatText = (value: string) =>
-  value
+const formatText = (value?: string): string =>
+  (value ?? "OTHER")
     .toLowerCase()
     .replace(/_/g, " ")
     .replace(/\b\w/g, (letter) => letter.toUpperCase());
 
+const getImageUrl = (image?: string): string => {
+  if (!image) {
+    return "/images/product-placeholder.webp";
+  }
+
+  if (image.startsWith("http://") || image.startsWith("https://")) {
+    return image;
+  }
+
+  const normalizedServer = serverApi.replace(/\/$/, "");
+  const normalizedImage = image.replace(/^\//, "");
+
+  return `${normalizedServer}/${normalizedImage}`;
+};
+
 export default function Products() {
   const dispatch = useDispatch();
+  const history = useHistory();
   const { products } = useSelector(productsRetriever);
 
   const [searchInput, setSearchInput] = React.useState("");
@@ -66,6 +83,8 @@ export default function Products() {
   const [sort, setSort] = React.useState<SortOption>("new");
   const [page, setPage] = React.useState(1);
   const [loading, setLoading] = React.useState(false);
+
+  const productList: Product[] = Array.isArray(products) ? products : [];
 
   React.useEffect(() => {
     const productService = new ProductService();
@@ -77,18 +96,20 @@ export default function Products() {
           ? "productView"
           : "createdAt";
 
+    const inquiry: ProductInquiry = {
+      page,
+      limit: 8,
+      order,
+      productCategories: category === "ALL" ? undefined : category,
+      search: search || undefined,
+    };
+
     setLoading(true);
 
     productService
-      .getProducts({
-        page,
-        limit: 8,
-        order,
-        productCategories: category === "ALL" ? undefined : category,
-        search: search || undefined,
-      })
+      .getProducts(inquiry)
       .then((data) => {
-        dispatch(setProducts(data));
+        dispatch(setProducts(Array.isArray(data) ? data : []));
       })
       .catch((error) => {
         console.log("getProducts error:", error);
@@ -110,6 +131,10 @@ export default function Products() {
     if (event.key === "Enter") {
       handleSearch();
     }
+  };
+
+  const chooseProductHandler = (productId: string) => {
+    history.push(`/products/${productId}`);
   };
 
   return (
@@ -183,7 +208,7 @@ export default function Products() {
                     setPage(1);
                   }}
                 >
-                  {item}
+                  {formatText(item)}
                 </Button>
               ))}
             </Stack>
@@ -195,34 +220,46 @@ export default function Products() {
             </Box>
 
             <span>
-              {loading ? "Loading..." : `${products.length} products`}
+              {loading ? "Loading..." : `${productList.length} products`}
             </span>
           </Stack>
 
-          {!loading && products.length > 0 ? (
+          {!loading && productList.length > 0 ? (
             <Box className="products-grid">
-              {products.map((product: Product) => {
-                const imagePath = product.productImages?.[0]
-                  ? `${serverApi}/${product.productImages[0]}`
-                  : "/images/product-placeholder.webp";
+              {productList.map((product) => {
+                const imagePath = getImageUrl(product.productImages?.[0]);
 
                 const createdAt = new Date(product.createdAt).getTime();
 
                 const thirtyDaysAgo = Date.now() - 30 * 24 * 60 * 60 * 1000;
 
-                const isNew = createdAt >= thirtyDaysAgo;
+                const isNew =
+                  Number.isFinite(createdAt) && createdAt >= thirtyDaysAgo;
 
                 return (
                   <Box
                     component="article"
                     className="catalog-card"
                     key={product._id}
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => chooseProductHandler(product._id)}
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter" || event.key === " ") {
+                        event.preventDefault();
+                        chooseProductHandler(product._id);
+                      }
+                    }}
                   >
                     <Box className="catalog-card__media">
                       <img
                         src={imagePath}
                         alt={product.productName}
                         loading="lazy"
+                        onError={(event) => {
+                          event.currentTarget.src =
+                            "/images/product-placeholder.webp";
+                        }}
                       />
 
                       {isNew && <Box className="catalog-card__label">New</Box>}
@@ -231,6 +268,10 @@ export default function Products() {
                         <IconButton
                           className="catalog-card__action"
                           aria-label={`Add ${product.productName} to basket`}
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            console.log("Add to basket:", product._id);
+                          }}
                         >
                           <ShoppingBagOutlinedIcon />
                         </IconButton>
@@ -238,6 +279,10 @@ export default function Products() {
                         <IconButton
                           className="catalog-card__action"
                           aria-label={`View ${product.productName}`}
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            chooseProductHandler(product._id);
+                          }}
                         >
                           <ArrowOutwardIcon />
                         </IconButton>
@@ -250,7 +295,7 @@ export default function Products() {
 
                         <Stack>
                           <VisibilityOutlinedIcon />
-                          {product.productView}
+                          {product.productView ?? 0}
                         </Stack>
                       </Stack>
 
@@ -265,7 +310,7 @@ export default function Products() {
                         </Box>
 
                         <Box className="catalog-card__price">
-                          ${product.productPrice.toLocaleString()}
+                          ${Number(product.productPrice ?? 0).toLocaleString()}
                         </Box>
                       </Stack>
                     </Box>
@@ -275,7 +320,7 @@ export default function Products() {
             </Box>
           ) : null}
 
-          {!loading && products.length === 0 ? (
+          {!loading && productList.length === 0 ? (
             <Stack className="products-empty">
               <Box component="h3">No furniture found</Box>
 
@@ -285,7 +330,7 @@ export default function Products() {
 
           <Stack className="products-pagination">
             <Pagination
-              count={3}
+              count={productList.length > 0 ? page + 1 : page}
               page={page}
               onChange={(_event, selectedPage) => setPage(selectedPage)}
               renderItem={(item) => (
