@@ -16,135 +16,100 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import ArrowOutwardIcon from "@mui/icons-material/ArrowOutward";
 import "../../../css/products.css";
 
+import { useDispatch, useSelector } from "react-redux";
+import { type Dispatch } from "@reduxjs/toolkit";
+import { createSelector } from "reselect";
+import { setProducts } from "./slice";
+import { retrieveProducts } from "./selector";
+import { serverApi } from "../../lib/config";
+import type { Product } from "../../lib/types/product";
+import {
+  ProductCategories,
+  type ProductCategories as ProductCategoriesType,
+} from "../../lib/enums/product.enum";
+import ProductService from "../../services/ProductService";
+
+/** REDUX SLICE & SELECTOR */
+const actionDispatch = (dispatch: Dispatch) => ({
+  setProducts: (data: Product[]) => dispatch(setProducts(data)),
+});
+
+const productsRetriever = createSelector(retrieveProducts, (products) => ({
+  products,
+}));
+
 type SortOption = "new" | "price" | "views";
-type Category = "All" | "Living Room" | "Dining" | "Bedroom" | "Office";
-
-interface Product {
-  id: number;
-  productName: string;
-  imagePath: string;
-  category: Exclude<Category, "All">;
-  material: string;
-  price: number;
-  views: number;
-  isNew: boolean;
-}
-
-const products: Product[] = [
-  {
-    id: 1,
-    productName: "Cloud Modular Sofa",
-    imagePath: "/img/sofa.webp",
-    category: "Living Room",
-    material: "Bouclé upholstery",
-    price: 1890,
-    views: 120,
-    isNew: true,
-  },
-  {
-    id: 2,
-    productName: "Cane Lounge Chair",
-    imagePath: "/img/lounge-chair.webp",
-    category: "Living Room",
-    material: "Oak and natural cane",
-    price: 680,
-    views: 85,
-    isNew: false,
-  },
-  {
-    id: 3,
-    productName: "Linea Oak Table",
-    imagePath: "/img/dining-table.webp",
-    category: "Dining",
-    material: "Solid European oak",
-    price: 1240,
-    views: 98,
-    isNew: true,
-  },
-  {
-    id: 4,
-    productName: "Nova Coffee Table",
-    imagePath: "/img/coffee-table.webp",
-    category: "Living Room",
-    material: "Travertine stone",
-    price: 760,
-    views: 75,
-    isNew: false,
-  },
-  {
-    id: 5,
-    productName: "Haven King Bed",
-    imagePath: "/img/bed.webp",
-    category: "Bedroom",
-    material: "Linen upholstery",
-    price: 1560,
-    views: 76,
-    isNew: true,
-  },
-  {
-    id: 6,
-    productName: "Noma Bedside Table",
-    imagePath: "/img/bedside-table.webp",
-    category: "Bedroom",
-    material: "Walnut veneer",
-    price: 395,
-    views: 52,
-    isNew: false,
-  },
-  {
-    id: 7,
-    productName: "Elysian Bookshelf",
-    imagePath: "/img/bookshelf.webp",
-    category: "Office",
-    material: "Smoked oak",
-    price: 990,
-    views: 64,
-    isNew: false,
-  },
-  {
-    id: 8,
-    productName: "Arco Dining Chair",
-    imagePath: "/img/modern-chair.webp",
-    category: "Dining",
-    material: "Ash wood",
-    price: 320,
-    views: 45,
-    isNew: true,
-  },
-];
+type Category = "ALL" | ProductCategoriesType;
 
 const categories: Category[] = [
-  "All",
-  "Living Room",
-  "Dining",
-  "Bedroom",
-  "Office",
+  "ALL",
+  ProductCategories.SOFAS,
+  ProductCategories.CHAIRS,
+  ProductCategories.TABLES,
+  ProductCategories.BEDS,
+  ProductCategories.WARDROBES,
+  ProductCategories.BOOKSHELVES,
+  ProductCategories.DESKS,
+  ProductCategories.DECOR,
+  ProductCategories.LIGHTING,
+  ProductCategories.OTHER,
 ];
 
+const formatText = (value: string) =>
+  value
+    .toLowerCase()
+    .replace(/_/g, " ")
+    .replace(/\b\w/g, (letter) => letter.toUpperCase());
+
 export default function Products() {
+  const { setProducts } = actionDispatch(useDispatch());
+  const { products } = useSelector(productsRetriever);
+
+  const [searchInput, setSearchInput] = React.useState("");
   const [search, setSearch] = React.useState("");
-  const [category, setCategory] = React.useState<Category>("All");
+  const [category, setCategory] = React.useState<Category>("ALL");
   const [sort, setSort] = React.useState<SortOption>("new");
   const [page, setPage] = React.useState(1);
 
-  const filteredProducts = React.useMemo(() => {
-    const result = products.filter((product) => {
-      const matchesSearch = product.productName
-        .toLowerCase()
-        .includes(search.toLowerCase());
+  React.useEffect(() => {
+    const productService = new ProductService();
 
-      const matchesCategory =
-        category === "All" || product.category === category;
+    const order =
+      sort === "price"
+        ? "productPrice"
+        : sort === "views"
+          ? "productView"
+          : "createdAt";
 
-      return matchesSearch && matchesCategory;
-    });
+    productService
+      .getProducts({
+        page,
+        limit: 8,
+        order,
+        productCategories: category === "ALL" ? undefined : category,
+        search: search || undefined,
+      })
+      .then((data) => {
+        setProducts(data);
+      })
+      .catch((error) => {
+        console.log("getProducts error:", error);
+        setProducts([]);
+      });
+  }, [page, category, sort, search]);
 
-    return [...result].sort((a, b) => {
-      if (sort === "price") return a.price - b.price;
-      if (sort === "views") return b.views - a.views;
-      return Number(b.isNew) - Number(a.isNew);
-    });
-  }, [search, category, sort]);
+  const handleSearch = () => {
+    setPage(1);
+    setSearch(searchInput.trim());
+  };
+
+  const handleSearchKeyDown = (
+    event: React.KeyboardEvent<HTMLInputElement>,
+  ) => {
+    if (event.key === "Enter") {
+      handleSearch();
+    }
+  };
 
   return (
     <main className="products-page">
@@ -167,16 +132,19 @@ export default function Products() {
 
               <input
                 type="search"
-                value={search}
+                value={searchInput}
                 placeholder="Search furniture"
                 aria-label="Search furniture"
-                onChange={(event) => {
-                  setSearch(event.target.value);
-                  setPage(1);
-                }}
+                onChange={(event) => setSearchInput(event.target.value)}
+                onKeyDown={handleSearchKeyDown}
               />
 
-              <Button className="products-search__button">Search</Button>
+              <Button
+                className="products-search__button"
+                onClick={handleSearch}
+              >
+                Search
+              </Button>
             </Box>
           </Stack>
         </Container>
@@ -197,7 +165,7 @@ export default function Products() {
                     setPage(1);
                   }}
                 >
-                  {item}
+                  {formatText(item)}
                 </Button>
               ))}
             </Stack>
@@ -209,7 +177,10 @@ export default function Products() {
                 <Button
                   key={item}
                   className={`products-sort ${sort === item ? "active" : ""}`}
-                  onClick={() => setSort(item)}
+                  onClick={() => {
+                    setSort(item);
+                    setPage(1);
+                  }}
                 >
                   {item}
                 </Button>
@@ -219,79 +190,89 @@ export default function Products() {
 
           <Stack className="products-result-heading">
             <Box component="h2">
-              {category === "All" ? "All furniture" : category}
+              {category === "ALL" ? "All furniture" : formatText(category)}
             </Box>
 
-            <span>{filteredProducts.length} products</span>
+            <span>{products.length} products</span>
           </Stack>
 
-          {filteredProducts.length > 0 ? (
+          {products.length > 0 ? (
             <Box className="products-grid">
-              {filteredProducts.map((product) => (
-                <Box
-                  component="article"
-                  className="catalog-card"
-                  key={product.id}
-                >
-                  <Box className="catalog-card__media">
-                    <img
-                      src={product.imagePath}
-                      alt={product.productName}
-                      loading="lazy"
-                    />
+              {products.map((product: Product) => {
+                const imagePath = product.productImages?.[0]
+                  ? `${serverApi}/${product.productImages[0]}`
+                  : "/images/product-placeholder.webp";
 
-                    {product.isNew && (
-                      <Box className="catalog-card__label">New</Box>
-                    )}
+                const createdAt = new Date(product.createdAt).getTime();
+                const thirtyDaysAgo = Date.now() - 30 * 24 * 60 * 60 * 1000;
+                const isNew = createdAt >= thirtyDaysAgo;
 
-                    <Stack className="catalog-card__actions">
-                      <IconButton
-                        className="catalog-card__action"
-                        aria-label={`Add ${product.productName} to basket`}
-                      >
-                        <ShoppingBagOutlinedIcon />
-                      </IconButton>
+                return (
+                  <Box
+                    component="article"
+                    className="catalog-card"
+                    key={product._id}
+                  >
+                    <Box className="catalog-card__media">
+                      <img
+                        src={imagePath}
+                        alt={product.productName}
+                        loading="lazy"
+                      />
 
-                      <IconButton
-                        className="catalog-card__action"
-                        aria-label={`View ${product.productName}`}
-                      >
-                        <ArrowOutwardIcon />
-                      </IconButton>
-                    </Stack>
-                  </Box>
+                      {isNew && <Box className="catalog-card__label">New</Box>}
 
-                  <Box className="catalog-card__content">
-                    <Stack className="catalog-card__meta">
-                      <span>{product.category}</span>
+                      <Stack className="catalog-card__actions">
+                        <IconButton
+                          className="catalog-card__action"
+                          aria-label={`Add ${product.productName} to basket`}
+                        >
+                          <ShoppingBagOutlinedIcon />
+                        </IconButton>
 
-                      <Stack>
-                        <VisibilityOutlinedIcon />
-                        {product.views}
+                        <IconButton
+                          className="catalog-card__action"
+                          aria-label={`View ${product.productName}`}
+                        >
+                          <ArrowOutwardIcon />
+                        </IconButton>
                       </Stack>
-                    </Stack>
-
-                    <Box component="h3" className="catalog-card__name">
-                      {product.productName}
                     </Box>
 
-                    <Stack className="catalog-card__footer">
-                      <Box className="catalog-card__material">
-                        {product.material}
+                    <Box className="catalog-card__content">
+                      <Stack className="catalog-card__meta">
+                        <span>{formatText(product.productCategories)}</span>
+
+                        <Stack>
+                          <VisibilityOutlinedIcon />
+                          {product.productView}
+                        </Stack>
+                      </Stack>
+
+                      <Box component="h3" className="catalog-card__name">
+                        {product.productName}
                       </Box>
 
-                      <Box className="catalog-card__price">
-                        ${product.price.toLocaleString()}
-                      </Box>
-                    </Stack>
+                      <Stack className="catalog-card__footer">
+                        <Box className="catalog-card__material">
+                          {formatText(product.productMaterial)} ·{" "}
+                          {formatText(product.productColor)}
+                        </Box>
+
+                        <Box className="catalog-card__price">
+                          ${product.productPrice.toLocaleString()}
+                        </Box>
+                      </Stack>
+                    </Box>
                   </Box>
-                </Box>
-              ))}
+                );
+              })}
             </Box>
           ) : (
             <Stack className="products-empty">
               <Box component="h3">No furniture found</Box>
-              <Box>Try another search term or product category.</Box>
+
+              <Box>Try another search term or furniture category.</Box>
             </Stack>
           )}
 
@@ -299,7 +280,7 @@ export default function Products() {
             <Pagination
               count={3}
               page={page}
-              onChange={(_, selectedPage) => setPage(selectedPage)}
+              onChange={(_event, selectedPage) => setPage(selectedPage)}
               renderItem={(item) => (
                 <PaginationItem
                   {...item}

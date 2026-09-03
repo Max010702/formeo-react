@@ -14,6 +14,31 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "../../../css/products.css";
 
+import { useDispatch, useSelector } from "react-redux";
+import { type Dispatch } from "@reduxjs/toolkit";
+import { setChoosenProduct, setRestaurant } from "./slice";
+import { createSelector } from "reselect";
+import { retrieveChoosenProduct, retrieveRestaurant } from "./selector";
+import type { Product } from "../../lib/types/product";
+
+/** REDUX SLICE % SELECTOR */
+const actionDispatch = (dispatch: Dispatch) => ({
+  setRestaurant: (data: Product[]) => dispatch(setRestaurant(data)),
+  setChoosenProduct: (data: Product[]) => dispatch(setChoosenProduct(data)),
+});
+
+const choosenProductRetriever = createSelector(
+  retrieveChoosenProduct,
+  (chosenProduct) => ({
+    chosenProduct,
+  }),
+);
+const restaurantRetriever = createSelector(
+  retrieveRestaurant,
+  (restaurant) => ({
+    restaurant,
+  }),
+);
 const product = {
   name: "Cloud Modular Sofa",
   category: "Living Room",
@@ -55,10 +80,12 @@ export default function ChosenProduct() {
               navigation
               modules={[Navigation]}
               className="chosen-product__slider"
-              onSwiper={(swiper) => {
+              onSwiper={(swiper: any) => {
                 swiperRef.current = swiper;
               }}
-              onSlideChange={(swiper) => {
+              onSlideChange={(swiper: {
+                realIndex: React.SetStateAction<number>;
+              }) => {
                 setActiveImage(swiper.realIndex);
               }}
             >
