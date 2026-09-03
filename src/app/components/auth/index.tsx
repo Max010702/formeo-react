@@ -28,6 +28,7 @@ const paperStyle = {
   maxHeight: "90vh",
   overflow: "auto",
   backgroundColor: "#fffdf9",
+  border: "1px solid rgba(33, 26, 21, 0.12)",
   borderRadius: "20px",
   boxShadow: "0 30px 80px rgba(33, 26, 21, 0.3)",
   outline: "none",
@@ -180,9 +181,9 @@ export default function AuthenticationModal({
                 sx={{
                   margin: 0,
                   marginBottom: 3,
+                  color: "#211a15",
                   fontFamily: "Georgia, serif",
                   fontSize: "2rem",
-                  color: "#211a15",
                 }}
               >
                 Create Account
@@ -225,7 +226,14 @@ export default function AuthenticationModal({
                 startIcon={<PersonAddAltIcon />}
                 disabled={loading}
                 onClick={() => void handleSignupRequest()}
-                sx={{ marginTop: 3, minHeight: 50 }}
+                sx={{
+                  marginTop: 3,
+                  minHeight: 50,
+                  backgroundColor: "#7b5638",
+                  "&:hover": {
+                    backgroundColor: "#5f402a",
+                  },
+                }}
               >
                 {loading ? "Please wait..." : "Sign Up"}
               </Button>
@@ -280,9 +288,9 @@ export default function AuthenticationModal({
                 sx={{
                   margin: 0,
                   marginBottom: 3,
+                  color: "#211a15",
                   fontFamily: "Georgia, serif",
                   fontSize: "2rem",
-                  color: "#211a15",
                 }}
               >
                 Welcome Back
@@ -315,7 +323,14 @@ export default function AuthenticationModal({
                 startIcon={<LoginIcon />}
                 disabled={loading}
                 onClick={() => void handleLoginRequest()}
-                sx={{ marginTop: 3, minHeight: 50 }}
+                sx={{
+                  marginTop: 3,
+                  minHeight: 50,
+                  backgroundColor: "#7b5638",
+                  "&:hover": {
+                    backgroundColor: "#5f402a",
+                  },
+                }}
               >
                 {loading ? "Please wait..." : "Login"}
               </Button>

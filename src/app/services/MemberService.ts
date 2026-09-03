@@ -1,4 +1,5 @@
 import axios from "axios";
+
 import { serverApi } from "../lib/config";
 import type { LoginInput, Member, MemberInput } from "../lib/types/member";
 
@@ -15,9 +16,9 @@ class MemberService {
 
   public async getTopUsers(): Promise<Member[]> {
     try {
-      const url = `${this.path}/member/top-users`;
-
-      const response = await axios.get<Member[]>(url);
+      const response = await axios.get<Member[]>(
+        `${this.path}/member/top-users`,
+      );
 
       console.log("getTopUsers:", response.data);
 
@@ -30,9 +31,9 @@ class MemberService {
 
   public async getRestaurant(): Promise<Member> {
     try {
-      const url = `${this.path}/member/restaurant`;
-
-      const response = await axios.get<Member>(url);
+      const response = await axios.get<Member>(
+        `${this.path}/member/restaurant`,
+      );
 
       console.log("getRestaurant:", response.data);
 
@@ -45,11 +46,13 @@ class MemberService {
 
   public async signup(input: MemberInput): Promise<Member> {
     try {
-      const url = `${this.path}/member/signup`;
-
-      const response = await axios.post<AuthenticationResponse>(url, input, {
-        withCredentials: true,
-      });
+      const response = await axios.post<AuthenticationResponse>(
+        `${this.path}/member/signup`,
+        input,
+        {
+          withCredentials: true,
+        },
+      );
 
       const member = response.data.member;
 
@@ -66,11 +69,13 @@ class MemberService {
 
   public async login(input: LoginInput): Promise<Member> {
     try {
-      const url = `${this.path}/member/login`;
-
-      const response = await axios.post<AuthenticationResponse>(url, input, {
-        withCredentials: true,
-      });
+      const response = await axios.post<AuthenticationResponse>(
+        `${this.path}/member/login`,
+        input,
+        {
+          withCredentials: true,
+        },
+      );
 
       const member = response.data.member;
 
@@ -81,6 +86,25 @@ class MemberService {
       return member;
     } catch (error) {
       console.error("Error, login:", error);
+      throw error;
+    }
+  }
+
+  public async logout(): Promise<void> {
+    try {
+      await axios.post(
+        `${this.path}/member/logout`,
+        {},
+        {
+          withCredentials: true,
+        },
+      );
+
+      localStorage.removeItem("memberData");
+
+      console.log("logout successful");
+    } catch (error) {
+      console.error("Error, logout:", error);
       throw error;
     }
   }
