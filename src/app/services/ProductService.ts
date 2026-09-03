@@ -11,50 +11,41 @@ class ProductService {
 
   public async getProducts(input: ProductInquiry): Promise<Product[]> {
     try {
-      let url =
-        `${this.path}/product/all` +
-        `?order=${input.order}` +
-        `&page=${input.page}` +
-        `&limit=${input.limit}`;
+      const response = await axios.get<Product[]>(`${this.path}/product/all`, {
+        params: {
+          order: input.order,
+          page: input.page,
+          limit: input.limit,
+          productCategories: input.productCategories,
+          productColor: input.productColor,
+          productMaterial: input.productMaterial,
+          search: input.search,
+        },
+        withCredentials: true,
+      });
 
-      if (input.productCategories) {
-        url += `&productCategories=${input.productCategories}`;
-      }
-
-      if (input.productColor) {
-        url += `&productColor=${input.productColor}`;
-      }
-
-      if (input.productMaterial) {
-        url += `&productMaterial=${input.productMaterial}`;
-      }
-
-      if (input.search) {
-        url += `&search=${encodeURIComponent(input.search)}`;
-      }
-
-      const result = await axios.get<Product[]>(url);
-
-      console.log("getProducts:", result.data);
-
-      return result.data;
-    } catch (err) {
-      console.log("Error, getProducts:", err);
-      throw err;
+      console.log("getProducts:", response.data);
+      return response.data;
+    } catch (error) {
+      console.error("Error, getProducts:", error);
+      throw error;
     }
   }
 
   public async getProduct(productId: string): Promise<Product> {
     try {
-      const url = `${this.path}/product/${productId}`;
-      const result = await axios.get<Product>(url);
+      const response = await axios.get<Product>(
+        `${this.path}/product/${productId}`,
+        {
+          withCredentials: true,
+        },
+      );
 
-      console.log("getProduct:", result.data);
-
-      return result.data;
-    } catch (err) {
-      console.log("Error, getProduct:", err);
-      throw err;
+      console.log("getProduct:", response.data);
+      return response.data;
+    } catch (error) {
+      console.error("Error, getProduct:", error);
+      throw error;
     }
   }
 }
