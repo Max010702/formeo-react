@@ -6,7 +6,6 @@ import type {
 } from "../enums/product.enum";
 
 export interface Product {
-  productCollection: any;
   _id: string;
   productStatus: ProductStatus;
   productCategories: ProductCategories;

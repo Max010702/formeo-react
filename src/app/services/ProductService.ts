@@ -11,13 +11,45 @@ class ProductService {
 
   public async getProducts(input: ProductInquiry): Promise<Product[]> {
     try {
-      let url = `${this.path}/product/all?order=${input.order}&page=${input.page}&limit=${input.limit}`;
-      if (input.productCollection)
-        url += `&productCollection=${input.productCollection}`;
-      if (input.search) url += `search=${input.search}`;
+      let url =
+        `${this.path}/product/all` +
+        `?order=${input.order}` +
+        `&page=${input.page}` +
+        `&limit=${input.limit}`;
 
-      const result = await axios.get(url);
-      console.log("getProducts:", result);
+      if (input.productCategories) {
+        url += `&productCategories=${input.productCategories}`;
+      }
+
+      if (input.productColor) {
+        url += `&productColor=${input.productColor}`;
+      }
+
+      if (input.productMaterial) {
+        url += `&productMaterial=${input.productMaterial}`;
+      }
+
+      if (input.search) {
+        url += `&search=${encodeURIComponent(input.search)}`;
+      }
+
+      const result = await axios.get<Product[]>(url);
+
+      console.log("getProducts:", result.data);
+
+      return result.data;
+    } catch (err) {
+      console.log("Error, getProducts:", err);
+      throw err;
+    }
+  }
+
+  public async getProduct(productId: string): Promise<Product> {
+    try {
+      const url = `${this.path}/product/${productId}`;
+      const result = await axios.get<Product>(url);
+
+      console.log("getProduct:", result.data);
 
       return result.data;
     } catch (err) {

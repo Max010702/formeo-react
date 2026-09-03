@@ -13,6 +13,7 @@ import { Navigation } from "swiper";
 import "swiper/css";
 import "swiper/css/navigation";
 import "../../../css/products.css";
+import type { Member } from "../../lib/types/member";
 
 import { useDispatch, useSelector } from "react-redux";
 import { type Dispatch } from "@reduxjs/toolkit";
@@ -23,8 +24,10 @@ import type { Product } from "../../lib/types/product";
 
 /** REDUX SLICE % SELECTOR */
 const actionDispatch = (dispatch: Dispatch) => ({
-  setRestaurant: (data: Product[]) => dispatch(setRestaurant(data)),
-  setChoosenProduct: (data: Product[]) => dispatch(setChoosenProduct(data)),
+  setRestaurant: (data: Member | null) => dispatch(setRestaurant(data)),
+
+  setChoosenProduct: (data: Product | null) =>
+    dispatch(setChoosenProduct(data)),
 });
 
 const choosenProductRetriever = createSelector(

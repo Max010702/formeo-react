@@ -17,7 +17,6 @@ import ArrowOutwardIcon from "@mui/icons-material/ArrowOutward";
 import "../../../css/products.css";
 
 import { useDispatch, useSelector } from "react-redux";
-import { type Dispatch } from "@reduxjs/toolkit";
 import { createSelector } from "reselect";
 import { setProducts } from "./slice";
 import { retrieveProducts } from "./selector";
@@ -29,11 +28,7 @@ import {
 } from "../../lib/enums/product.enum";
 import ProductService from "../../services/ProductService";
 
-/** REDUX SLICE & SELECTOR */
-const actionDispatch = (dispatch: Dispatch) => ({
-  setProducts: (data: Product[]) => dispatch(setProducts(data)),
-});
-
+/** REDUX SELECTOR */
 const productsRetriever = createSelector(retrieveProducts, (products) => ({
   products,
 }));
@@ -62,7 +57,7 @@ const formatText = (value: string) =>
     .replace(/\b\w/g, (letter) => letter.toUpperCase());
 
 export default function Products() {
-  const { setProducts } = actionDispatch(useDispatch());
+  const dispatch = useDispatch();
   const { products } = useSelector(productsRetriever);
 
   const [searchInput, setSearchInput] = React.useState("");
@@ -70,6 +65,7 @@ export default function Products() {
   const [category, setCategory] = React.useState<Category>("ALL");
   const [sort, setSort] = React.useState<SortOption>("new");
   const [page, setPage] = React.useState(1);
+  const [loading, setLoading] = React.useState(false);
 
   React.useEffect(() => {
     const productService = new ProductService();
@@ -81,6 +77,8 @@ export default function Products() {
           ? "productView"
           : "createdAt";
 
+    setLoading(true);
+
     productService
       .getProducts({
         page,
@@ -90,13 +88,16 @@ export default function Products() {
         search: search || undefined,
       })
       .then((data) => {
-        setProducts(data);
+        dispatch(setProducts(data));
       })
       .catch((error) => {
         console.log("getProducts error:", error);
-        setProducts([]);
+        dispatch(setProducts([]));
+      })
+      .finally(() => {
+        setLoading(false);
       });
-  }, [page, category, sort, search]);
+  }, [dispatch, page, category, sort, search]);
 
   const handleSearch = () => {
     setPage(1);
@@ -193,10 +194,12 @@ export default function Products() {
               {category === "ALL" ? "All furniture" : formatText(category)}
             </Box>
 
-            <span>{products.length} products</span>
+            <span>
+              {loading ? "Loading..." : `${products.length} products`}
+            </span>
           </Stack>
 
-          {products.length > 0 ? (
+          {!loading && products.length > 0 ? (
             <Box className="products-grid">
               {products.map((product: Product) => {
                 const imagePath = product.productImages?.[0]
@@ -204,7 +207,9 @@ export default function Products() {
                   : "/images/product-placeholder.webp";
 
                 const createdAt = new Date(product.createdAt).getTime();
+
                 const thirtyDaysAgo = Date.now() - 30 * 24 * 60 * 60 * 1000;
+
                 const isNew = createdAt >= thirtyDaysAgo;
 
                 return (
@@ -268,13 +273,15 @@ export default function Products() {
                 );
               })}
             </Box>
-          ) : (
+          ) : null}
+
+          {!loading && products.length === 0 ? (
             <Stack className="products-empty">
               <Box component="h3">No furniture found</Box>
 
               <Box>Try another search term or furniture category.</Box>
             </Stack>
-          )}
+          ) : null}
 
           <Stack className="products-pagination">
             <Pagination

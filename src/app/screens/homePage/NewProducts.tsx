@@ -73,7 +73,7 @@ export default function NewProducts() {
                     <CardContent className="new-product-card__content">
                       <Stack className="new-product-card__metadata">
                         <Box className="new-product-card__category">
-                          {product.productCollection}
+                          {product.productCategories}
                         </Box>
 
                         <Stack className="new-product-card__views">

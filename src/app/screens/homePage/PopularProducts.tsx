@@ -6,21 +6,50 @@ import CardContent from "@mui/joy/CardContent";
 import Typography from "@mui/joy/Typography";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import ArrowOutwardIcon from "@mui/icons-material/ArrowOutward";
+import "../../../css/home.css";
 
 import { useSelector } from "react-redux";
 import { createSelector } from "reselect";
 import { retrievePopularProducts } from "./selector";
 import { serverApi } from "../../lib/config";
-import type { Product } from "../..//lib/types/product";
+import type { Product } from "../../lib/types/product";
 
-/** REDUX SLICE & SELECTOR */
+/** REDUX SELECTOR */
 const popularProductsRetriever = createSelector(
   retrievePopularProducts,
-  (popularProducts) => ({ popularProducts }),
+  (popularProducts) => ({
+    popularProducts,
+  }),
 );
+
+const formatText = (value?: string): string => {
+  return (value ?? "OTHER")
+    .toLowerCase()
+    .replace(/_/g, " ")
+    .replace(/\b\w/g, (letter) => letter.toUpperCase());
+};
+
+const getImageUrl = (image?: string): string => {
+  if (!image) {
+    return "/images/product-placeholder.webp";
+  }
+
+  if (image.startsWith("http://") || image.startsWith("https://")) {
+    return image;
+  }
+
+  const normalizedServer = serverApi.replace(/\/$/, "");
+  const normalizedImage = image.replace(/^\//, "");
+
+  return `${normalizedServer}/${normalizedImage}`;
+};
 
 export default function PopularProducts() {
   const { popularProducts } = useSelector(popularProductsRetriever);
+
+  const products: Product[] = Array.isArray(popularProducts)
+    ? popularProducts
+    : [];
 
   return (
     <section className="popular-products">
@@ -41,21 +70,12 @@ export default function PopularProducts() {
         </Stack>
 
         <CssVarsProvider>
-          {popularProducts.length > 0 ? (
+          {products.length > 0 ? (
             <Box className="popular-products__grid">
-              {popularProducts.map((product: Product, index: number) => {
-                const imagePath = product.productImages?.[0]
-                  ? `${serverApi}/${product.productImages[0]}`
-                  : "/images/product-placeholder.webp";
+              {products.map((product, index) => {
+                const imagePath = getImageUrl(product.productImages?.[0]);
 
-                const collection = product.productCollection
-                  .toLowerCase()
-                  .split("_")
-                  .map(
-                    (word: string) =>
-                      word.charAt(0).toUpperCase() + word.slice(1),
-                  )
-                  .join(" ");
+                const category = formatText(product.productCategories);
 
                 return (
                   <Card
@@ -69,6 +89,10 @@ export default function PopularProducts() {
                         src={imagePath}
                         alt={product.productName}
                         loading="lazy"
+                        onError={(event) => {
+                          event.currentTarget.src =
+                            "/images/product-placeholder.webp";
+                        }}
                       />
                     </CardCover>
 
@@ -82,14 +106,12 @@ export default function PopularProducts() {
 
                         <Stack className="product-card__views">
                           <VisibilityOutlinedIcon />
-                          <span>{product.productView}</span>
+                          <span>{product.productView ?? 0}</span>
                         </Stack>
                       </Stack>
 
                       <Box className="product-card__information">
-                        <Box className="product-card__category">
-                          {collection}
-                        </Box>
+                        <Box className="product-card__category">{category}</Box>
 
                         <Stack className="product-card__name-row">
                           <Typography
@@ -122,7 +144,8 @@ export default function PopularProducts() {
                           </Box>
 
                           <Box className="product-card__price">
-                            ${product.productPrice.toLocaleString()}
+                            $
+                            {Number(product.productPrice ?? 0).toLocaleString()}
                           </Box>
                         </Stack>
                       </Box>
