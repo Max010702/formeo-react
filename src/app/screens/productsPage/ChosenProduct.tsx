@@ -6,7 +6,6 @@ import { FreeMode, Navigation, Thumbs } from "swiper";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 
-import Divider from "../../components/divider";
 import ProductService from "../../services/ProductService";
 import MemberService from "../../services/MemberService";
 import { setChosenProduct, setRestaurant } from "./slice";
@@ -28,6 +27,7 @@ export default function ChosenProduct({ onAdd }: ChosenProductProps) {
   const { productId } = useParams<{ productId: string }>();
 
   const chosenProduct = useSelector(retrieveChosenProduct);
+
   const restaurant = useSelector(retrieveRestaurant);
 
   useEffect(() => {
@@ -42,7 +42,7 @@ export default function ChosenProduct({ onAdd }: ChosenProductProps) {
         dispatch(setChosenProduct(product));
       })
       .catch((error) => {
-        console.error("Failed to load product:", error);
+        console.error("Failed to load chosen product:", error);
       });
 
     memberService
@@ -53,30 +53,32 @@ export default function ChosenProduct({ onAdd }: ChosenProductProps) {
       .catch((error) => {
         console.error("Failed to load store:", error);
       });
+
+    return () => {
+      dispatch(setChosenProduct(null));
+    };
   }, [dispatch, productId]);
 
   if (!chosenProduct) {
     return (
-      <Stack minHeight="400px" alignItems="center" justifyContent="center">
+      <Stack minHeight="450px" alignItems="center" justifyContent="center">
         Loading product...
       </Stack>
     );
   }
 
   const handleAddToBasket = () => {
-    const cartItem: CartItem = {
+    onAdd({
       _id: chosenProduct._id,
+      quantity: 1,
       name: chosenProduct.productName,
       price: chosenProduct.productPrice,
       image: chosenProduct.productImages[0] ?? "",
-      quantity: 1,
-    };
-
-    onAdd(cartItem);
+    });
   };
 
   return (
-    <section className="chosen-product">
+    <main className="chosen-product">
       <Box component="h1" className="title">
         Product Detail
       </Box>
@@ -123,11 +125,11 @@ export default function ChosenProduct({ onAdd }: ChosenProductProps) {
             </strong>
 
             {restaurant && (
-              <Box className="store-information">
+              <Stack className="store-information">
                 <span className="resto-name">{restaurant.memberNick}</span>
 
                 <span className="resto-name">{restaurant.memberPhone}</span>
-              </Box>
+              </Stack>
             )}
 
             <Box className="rating-box">
@@ -140,25 +142,35 @@ export default function ChosenProduct({ onAdd }: ChosenProductProps) {
 
               <Box className="evaluation-box">
                 <Box className="product-view">
-                  <RemoveRedEyeIcon sx={{ mr: "8px" }} />
+                  <RemoveRedEyeIcon sx={{ mr: 1 }} />
                   <span>{chosenProduct.productView}</span>
                 </Box>
               </Box>
             </Box>
 
-            <Box className="product-specifications">
+            <Stack className="product-specifications">
               <span>Color: {chosenProduct.productColor}</span>
+
               <span>Material: {chosenProduct.productMaterial}</span>
+
               <span>Available: {chosenProduct.productLeftCount}</span>
-            </Box>
+            </Stack>
 
             <p className="product-desc">
               {chosenProduct.productDesc || "No description available."}
             </p>
 
-            <Divider height={1} width={100} bg="#d8d1c7" />
+            <Box
+              sx={{
+                width: "100%",
+                height: "1px",
+                backgroundColor: "#d8d1c7",
+              }}
+            />
+
             <Box className="product-price">
               <span>Price</span>
+
               <strong>${chosenProduct.productPrice.toLocaleString()}</strong>
             </Box>
 
@@ -176,6 +188,6 @@ export default function ChosenProduct({ onAdd }: ChosenProductProps) {
           </Box>
         </Stack>
       </Container>
-    </section>
+    </main>
   );
 }

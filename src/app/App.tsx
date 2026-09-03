@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { Route, Switch, useHistory, useLocation } from "react-router-dom";
 
 import HomeNavbar from "./components/headers/HomeNavbar";
@@ -9,89 +8,20 @@ import ProductsPage from "./screens/productsPage";
 import OrdersPage from "./screens/ordersPage";
 import UserPage from "./screens/usersPage";
 import HelpPage from "./screens/helpPage";
-import type { CartItem } from "./lib/types/search";
+import useBasket from "./hooks/useBasket";
 
 import "../css/app.css";
 import "../css/navbar.css";
 import "../css/footer.css";
 
-const getInitialCart = (): CartItem[] => {
-  try {
-    const savedCart = localStorage.getItem("cartData");
-
-    if (!savedCart) {
-      return [];
-    }
-
-    const parsedCart: unknown = JSON.parse(savedCart);
-
-    return Array.isArray(parsedCart) ? (parsedCart as CartItem[]) : [];
-  } catch (error) {
-    console.error("Failed to read cart data:", error);
-    return [];
-  }
-};
-
 function App() {
   const location = useLocation();
   const history = useHistory();
 
-  const [cartItems, setCartItems] = useState<CartItem[]>(getInitialCart);
-
-  useEffect(() => {
-    localStorage.setItem("cartData", JSON.stringify(cartItems));
-  }, [cartItems]);
-
-  const onAdd = (input: CartItem) => {
-    setCartItems((currentItems) => {
-      const existingItem = currentItems.find((item) => item._id === input._id);
-
-      if (existingItem) {
-        return currentItems.map((item) =>
-          item._id === input._id
-            ? {
-                ...item,
-                quantity: item.quantity + 1,
-              }
-            : item,
-        );
-      }
-
-      return [
-        ...currentItems,
-        {
-          ...input,
-          quantity: input.quantity || 1,
-        },
-      ];
-    });
-  };
-
-  const onRemove = (input: CartItem) => {
-    setCartItems((currentItems) =>
-      currentItems
-        .map((item) =>
-          item._id === input._id
-            ? {
-                ...item,
-                quantity: item.quantity - 1,
-              }
-            : item,
-        )
-        .filter((item) => item.quantity > 0),
-    );
-  };
-
-  const onDelete = (input: CartItem) => {
-    setCartItems((currentItems) =>
-      currentItems.filter((item) => item._id !== input._id),
-    );
-  };
+  const { cartItems, onAdd, onRemove, onDelete, onDeleteAll } = useBasket();
 
   const onOrder = () => {
-    if (cartItems.length === 0) {
-      return;
-    }
+    if (cartItems.length === 0) return;
 
     history.push("/orders");
   };
@@ -101,6 +31,7 @@ function App() {
     onAdd,
     onRemove,
     onDelete,
+    onDeleteAll,
     onOrder,
   };
 

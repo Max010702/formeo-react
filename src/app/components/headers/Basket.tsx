@@ -1,7 +1,9 @@
-import React from "react";
+import { useState, type MouseEvent } from "react";
 import { Badge, Box, Button, IconButton, Menu, Stack } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+
 import type { CartItem } from "../../lib/types/search";
 import { serverApi } from "../../lib/config";
 
@@ -10,6 +12,7 @@ interface BasketProps {
   onAdd: (item: CartItem) => void;
   onRemove: (item: CartItem) => void;
   onDelete: (item: CartItem) => void;
+  onDeleteAll: () => void;
   onOrder?: () => void;
 }
 
@@ -18,23 +21,28 @@ export default function Basket({
   onAdd,
   onRemove,
   onDelete,
+  onDeleteAll,
   onOrder,
 }: BasketProps) {
-  const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
   const open = Boolean(anchorEl);
-
-  const totalPrice = cartItems.reduce(
-    (total, item) => total + item.price * item.quantity,
-    0,
-  );
 
   const totalQuantity = cartItems.reduce(
     (total, item) => total + item.quantity,
     0,
   );
 
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const itemsPrice = cartItems.reduce(
+    (total, item) => total + item.quantity * item.price,
+    0,
+  );
+
+  const shippingCost = itemsPrice > 0 && itemsPrice < 100 ? 5 : 0;
+
+  const totalPrice = itemsPrice + shippingCost;
+
+  const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
 
@@ -43,6 +51,8 @@ export default function Basket({
   };
 
   const handleOrder = () => {
+    if (cartItems.length === 0) return;
+
     onOrder?.();
     handleClose();
   };
@@ -62,7 +72,7 @@ export default function Basket({
           color="secondary"
           invisible={totalQuantity === 0}
         >
-          <img src="/icons/shopping-cart.svg" alt="" className="basket-icon" />
+          <img src="/icons/shopping-cart.svg" className="basket-icon" alt="" />
         </Badge>
       </IconButton>
 
@@ -106,7 +116,26 @@ export default function Basket({
       >
         <Stack className="basket-frame">
           <Box className="all-check-box">
-            {cartItems.length === 0 ? "Cart is empty!" : "Your Cart"}
+            {cartItems.length === 0 ? (
+              <span>Cart is empty!</span>
+            ) : (
+              <Stack
+                direction="row"
+                alignItems="center"
+                justifyContent="space-between"
+              >
+                <span>Cart Products</span>
+
+                <IconButton
+                  size="small"
+                  color="primary"
+                  aria-label="Delete all cart items"
+                  onClick={onDeleteAll}
+                >
+                  <DeleteForeverIcon />
+                </IconButton>
+              </Stack>
+            )}
           </Box>
 
           {cartItems.length > 0 && (
@@ -121,17 +150,18 @@ export default function Basket({
                     return (
                       <Box key={item._id} className="basket-info-box">
                         <IconButton
+                          size="small"
                           className="cancel-btn"
-                          aria-label={`Remove ${item.name} from cart`}
+                          aria-label={`Remove ${item.name}`}
                           onClick={() => onDelete(item)}
                         >
-                          <CancelIcon />
+                          <CancelIcon color="primary" />
                         </IconButton>
 
                         <img
                           src={imagePath}
-                          alt={item.name}
                           className="product-img"
+                          alt={item.name}
                         />
 
                         <Box className="basket-product-content">
@@ -142,7 +172,7 @@ export default function Basket({
                           </p>
                         </Box>
 
-                        <Box className="basket-quantity">
+                        <Box className="col-2">
                           <button
                             type="button"
                             className="remove"
@@ -152,7 +182,7 @@ export default function Basket({
                             −
                           </button>
 
-                          <span>{item.quantity}</span>
+                          <span className="item-quantity">{item.quantity}</span>
 
                           <button
                             type="button"
@@ -170,9 +200,16 @@ export default function Basket({
               </Box>
 
               <Box className="basket-order">
-                <span className="price">
-                  Total: ${totalPrice.toLocaleString()}
-                </span>
+                <Box className="basket-total">
+                  <span className="price">
+                    Total: ${totalPrice.toLocaleString()}
+                  </span>
+
+                  <small>
+                    Products: ${itemsPrice.toLocaleString()} + Delivery: $
+                    {shippingCost.toLocaleString()}
+                  </small>
+                </Box>
 
                 <Button
                   variant="contained"

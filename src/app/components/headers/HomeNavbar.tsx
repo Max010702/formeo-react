@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Box, Button, Container, Stack } from "@mui/material";
 import { NavLink } from "react-router-dom";
+
 import Basket from "./Basket";
 import type { CartItem } from "../../lib/types/search";
 
@@ -9,7 +10,8 @@ interface HomeNavbarProps {
   onAdd: (item: CartItem) => void;
   onRemove: (item: CartItem) => void;
   onDelete: (item: CartItem) => void;
-  onOrder?: () => void;
+  onDeleteAll: () => void;
+  onOrder: () => void;
 }
 
 export default function HomeNavbar({
@@ -17,21 +19,23 @@ export default function HomeNavbar({
   onAdd,
   onRemove,
   onDelete,
+  onDeleteAll,
   onOrder,
 }: HomeNavbarProps) {
   const authMember = null;
+
   const [serviceHours, setServiceHours] = useState(0);
   const [showSignupMessage, setShowSignupMessage] = useState(false);
 
   useEffect(() => {
     const intervalId = window.setInterval(() => {
-      setServiceHours((previousHours) => {
-        if (previousHours >= 24) {
+      setServiceHours((currentHours) => {
+        if (currentHours >= 24) {
           window.clearInterval(intervalId);
           return 24;
         }
 
-        return previousHours + 1;
+        return currentHours + 1;
       });
     }, 50);
 
@@ -40,8 +44,8 @@ export default function HomeNavbar({
     };
   }, []);
 
-  const handleSignup = () => {
-    setShowSignupMessage((previousValue) => !previousValue);
+  const signupHandler = () => {
+    setShowSignupMessage((currentValue) => !currentValue);
   };
 
   return (
@@ -98,6 +102,7 @@ export default function HomeNavbar({
               onAdd={onAdd}
               onRemove={onRemove}
               onDelete={onDelete}
+              onDeleteAll={onDeleteAll}
               onOrder={onOrder}
             />
 
@@ -138,7 +143,7 @@ export default function HomeNavbar({
                 <Button
                   variant="contained"
                   className="signup-button"
-                  onClick={handleSignup}
+                  onClick={signupHandler}
                 >
                   Explore Collection
                 </Button>
