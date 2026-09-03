@@ -1,42 +1,38 @@
 import React from "react";
 import { Badge, Box, Button, IconButton, Menu, Stack } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
-import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
-import "../../../css/navbar.css";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import type { CartItem } from "../../lib/types/search";
+import { serverApi } from "../../lib/config";
 
-interface BasketItem {
-  id: string;
-  name: string;
-  price: number;
-  quantity: number;
-  image: string;
+interface BasketProps {
+  cartItems: CartItem[];
+  onAdd: (item: CartItem) => void;
+  onRemove: (item: CartItem) => void;
+  onDelete: (item: CartItem) => void;
+  onOrder?: () => void;
 }
 
-const initialItems: BasketItem[] = [
-  {
-    id: "chair-01",
-    name: "Lounge Chair",
-    price: 420,
-    quantity: 1,
-    image: "/images/hero.png",
-  },
-];
-
-export default function Basket() {
+export default function Basket({
+  cartItems,
+  onAdd,
+  onRemove,
+  onDelete,
+  onOrder,
+}: BasketProps) {
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
-  const [items, setItems] = React.useState<BasketItem[]>(initialItems);
 
   const open = Boolean(anchorEl);
 
-  const totalQuantity = items.reduce((total, item) => total + item.quantity, 0);
-
-  const subtotal = items.reduce(
+  const totalPrice = cartItems.reduce(
     (total, item) => total + item.price * item.quantity,
     0,
   );
 
-  const delivery = subtotal > 0 ? 25 : 0;
-  const total = subtotal + delivery;
+  const totalQuantity = cartItems.reduce(
+    (total, item) => total + item.quantity,
+    0,
+  );
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -46,32 +42,15 @@ export default function Basket() {
     setAnchorEl(null);
   };
 
-  const increaseQuantity = (id: string) => {
-    setItems((currentItems) =>
-      currentItems.map((item) =>
-        item.id === id ? { ...item, quantity: item.quantity + 1 } : item,
-      ),
-    );
-  };
-
-  const decreaseQuantity = (id: string) => {
-    setItems((currentItems) =>
-      currentItems
-        .map((item) =>
-          item.id === id ? { ...item, quantity: item.quantity - 1 } : item,
-        )
-        .filter((item) => item.quantity > 0),
-    );
-  };
-
-  const removeItem = (id: string) => {
-    setItems((currentItems) => currentItems.filter((item) => item.id !== id));
+  const handleOrder = () => {
+    onOrder?.();
+    handleClose();
   };
 
   return (
     <Box className="basket">
       <IconButton
-        className="basket__trigger"
+        id="basket-button"
         aria-label={`Shopping cart with ${totalQuantity} items`}
         aria-controls={open ? "basket-menu" : undefined}
         aria-haspopup="true"
@@ -80,10 +59,10 @@ export default function Basket() {
       >
         <Badge
           badgeContent={totalQuantity}
+          color="secondary"
           invisible={totalQuantity === 0}
-          className="basket__badge"
         >
-          <ShoppingCartOutlinedIcon />
+          <img src="/icons/shopping-cart.svg" alt="" className="basket-icon" />
         </Badge>
       </IconButton>
 
@@ -92,6 +71,30 @@ export default function Basket() {
         anchorEl={anchorEl}
         open={open}
         onClose={handleClose}
+        MenuListProps={{
+          "aria-labelledby": "basket-button",
+          disablePadding: true,
+        }}
+        PaperProps={{
+          elevation: 0,
+          sx: {
+            mt: 1.5,
+            overflow: "visible",
+            borderRadius: "18px",
+            filter: "drop-shadow(0 12px 30px rgba(33, 26, 21, 0.18))",
+            "&::before": {
+              content: '""',
+              position: "absolute",
+              top: 0,
+              right: 18,
+              width: 12,
+              height: 12,
+              bgcolor: "background.paper",
+              transform: "translateY(-50%) rotate(45deg)",
+              zIndex: 0,
+            },
+          },
+        }}
         transformOrigin={{
           horizontal: "right",
           vertical: "top",
@@ -100,86 +103,51 @@ export default function Basket() {
           horizontal: "right",
           vertical: "bottom",
         }}
-        PaperProps={{
-          className: "basket__paper",
-        }}
-        MenuListProps={{
-          className: "basket__menu-list",
-          "aria-labelledby": "basket-button",
-        }}
       >
-        <Stack className="basket__frame">
-          <Stack className="basket__header">
-            <Box>
-              <Box className="basket__eyebrow">Your selection</Box>
-              <Box className="basket__title">Shopping cart</Box>
-            </Box>
+        <Stack className="basket-frame">
+          <Box className="all-check-box">
+            {cartItems.length === 0 ? "Cart is empty!" : "Your Cart"}
+          </Box>
 
-            <Box className="basket__item-count">
-              {totalQuantity} {totalQuantity === 1 ? "item" : "items"}
-            </Box>
-          </Stack>
-
-          {items.length === 0 ? (
-            <Stack className="basket__empty">
-              <Box className="basket__empty-icon">
-                <ShoppingCartOutlinedIcon />
-              </Box>
-
-              <Box className="basket__empty-title">Your cart is empty</Box>
-
-              <Box className="basket__empty-text">
-                Discover timeless furniture for your home.
-              </Box>
-
-              <Button
-                variant="contained"
-                className="basket__continue-button"
-                onClick={handleClose}
-              >
-                Explore collection
-              </Button>
-            </Stack>
-          ) : (
+          {cartItems.length > 0 && (
             <>
-              <Stack className="basket__items">
-                {items.map((item) => (
-                  <Box className="basket__item" key={item.id}>
-                    <Box className="basket__image-wrapper">
-                      <img
-                        src={item.image}
-                        className="basket__product-image"
-                        alt={item.name}
-                      />
-                    </Box>
+              <Box className="orders-main-wrapper">
+                <Stack className="orders-wrapper">
+                  {cartItems.map((item) => {
+                    const imagePath = item.image.startsWith("http")
+                      ? item.image
+                      : `${serverApi}/${item.image}`;
 
-                    <Stack className="basket__product-details">
-                      <Stack className="basket__product-heading">
-                        <Box>
-                          <Box className="basket__product-name">
-                            {item.name}
-                          </Box>
-
-                          <Box className="basket__product-category">
-                            Furniture collection
-                          </Box>
-                        </Box>
-
+                    return (
+                      <Box key={item._id} className="basket-info-box">
                         <IconButton
-                          className="basket__remove-item"
-                          aria-label={`Remove ${item.name}`}
-                          onClick={() => removeItem(item.id)}
+                          className="cancel-btn"
+                          aria-label={`Remove ${item.name} from cart`}
+                          onClick={() => onDelete(item)}
                         >
                           <CancelIcon />
                         </IconButton>
-                      </Stack>
 
-                      <Stack className="basket__product-bottom">
-                        <Stack className="basket__quantity">
+                        <img
+                          src={imagePath}
+                          alt={item.name}
+                          className="product-img"
+                        />
+
+                        <Box className="basket-product-content">
+                          <span className="product-name">{item.name}</span>
+
+                          <p className="product-price">
+                            ${item.price.toLocaleString()} × {item.quantity}
+                          </p>
+                        </Box>
+
+                        <Box className="basket-quantity">
                           <button
                             type="button"
+                            className="remove"
                             aria-label={`Decrease ${item.name} quantity`}
-                            onClick={() => decreaseQuantity(item.id)}
+                            onClick={() => onRemove(item)}
                           >
                             −
                           </button>
@@ -188,46 +156,32 @@ export default function Basket() {
 
                           <button
                             type="button"
+                            className="add"
                             aria-label={`Increase ${item.name} quantity`}
-                            onClick={() => increaseQuantity(item.id)}
+                            onClick={() => onAdd(item)}
                           >
                             +
                           </button>
-                        </Stack>
-
-                        <Box className="basket__product-price">
-                          ${(item.price * item.quantity).toLocaleString()}
                         </Box>
-                      </Stack>
-                    </Stack>
-                  </Box>
-                ))}
-              </Stack>
-
-              <Stack className="basket__summary">
-                <Stack className="basket__summary-row">
-                  <span>Subtotal</span>
-                  <strong>${subtotal.toLocaleString()}</strong>
+                      </Box>
+                    );
+                  })}
                 </Stack>
+              </Box>
 
-                <Stack className="basket__summary-row">
-                  <span>Delivery</span>
-                  <strong>${delivery.toLocaleString()}</strong>
-                </Stack>
-
-                <Stack className="basket__summary-total">
-                  <span>Total</span>
-                  <strong>${total.toLocaleString()}</strong>
-                </Stack>
+              <Box className="basket-order">
+                <span className="price">
+                  Total: ${totalPrice.toLocaleString()}
+                </span>
 
                 <Button
-                  startIcon={<ShoppingCartOutlinedIcon />}
                   variant="contained"
-                  className="basket__checkout-button"
+                  startIcon={<ShoppingCartIcon />}
+                  onClick={handleOrder}
                 >
-                  Proceed to checkout
+                  Order
                 </Button>
-              </Stack>
+              </Box>
             </>
           )}
         </Stack>

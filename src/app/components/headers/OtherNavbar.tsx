@@ -1,84 +1,95 @@
 import { Box, Button, Container, Stack } from "@mui/material";
 import { NavLink } from "react-router-dom";
-import "../../../css/navbar.css";
 import Basket from "./Basket";
+import type { CartItem } from "../../lib/types/search";
 
-export default function OtherNavbar() {
-  const authMember = true;
+interface OtherNavbarProps {
+  cartItems: CartItem[];
+  onAdd: (item: CartItem) => void;
+  onRemove: (item: CartItem) => void;
+  onDelete: (item: CartItem) => void;
+  onOrder?: () => void;
+}
+
+export default function OtherNavbar({
+  cartItems,
+  onAdd,
+  onRemove,
+  onDelete,
+  onOrder,
+}: OtherNavbarProps) {
+  const authMember = null;
 
   return (
     <header className="other-navbar">
-      <Container className="other-navbar__container">
-        <Stack className="other-navbar__menu">
-          <Box>
-            <NavLink to="/" className="other-navbar__brand-link">
+      <Container className="navbar-container">
+        <Stack className="menu">
+          <Box className="brand">
+            <NavLink to="/" aria-label="Go to home page">
               <img
-                className="other-navbar__brand-logo"
+                className="brand-logo"
                 src="/icons/burak.svg"
-                alt="Furniture brand"
+                alt="Formeo Furniture"
               />
             </NavLink>
           </Box>
 
-          <Stack className="other-navbar__links">
-            <Box className="other-navbar__hover-line">
+          <Stack className="links">
+            <Box className="hover-line">
               <NavLink exact to="/" activeClassName="underline">
                 Home
               </NavLink>
             </Box>
 
-            <Box className="other-navbar__hover-line">
+            <Box className="hover-line">
               <NavLink to="/products" activeClassName="underline">
                 Products
               </NavLink>
             </Box>
 
-            {authMember ? (
-              <Box className="other-navbar__hover-line">
-                <NavLink to="/orders" activeClassName="underline">
-                  Orders
-                </NavLink>
-              </Box>
-            ) : null}
+            {authMember && (
+              <>
+                <Box className="hover-line">
+                  <NavLink to="/orders" activeClassName="underline">
+                    Orders
+                  </NavLink>
+                </Box>
 
-            {authMember ? (
-              <Box className="other-navbar__hover-line">
-                <NavLink to="/member-page" activeClassName="underline">
-                  My Page
-                </NavLink>
-              </Box>
-            ) : null}
+                <Box className="hover-line">
+                  <NavLink to="/member-page" activeClassName="underline">
+                    My Page
+                  </NavLink>
+                </Box>
+              </>
+            )}
 
-            <Box className="other-navbar__hover-line">
+            <Box className="hover-line">
               <NavLink to="/help" activeClassName="underline">
                 Help
               </NavLink>
             </Box>
 
-            <Basket />
+            <Basket
+              cartItems={cartItems}
+              onAdd={onAdd}
+              onRemove={onRemove}
+              onDelete={onDelete}
+              onOrder={onOrder}
+            />
 
             {!authMember ? (
-              <Box>
-                <Button variant="contained" className="other-navbar__login">
-                  Login
-                </Button>
-              </Box>
+              <Button variant="contained" className="login-button">
+                Login
+              </Button>
             ) : (
               <img
-                className="other-navbar__avatar"
+                className="user-avatar"
                 src="/icons/default-user.svg"
                 alt="User profile"
                 aria-haspopup="true"
               />
             )}
           </Stack>
-
-          <Button
-            className="other-navbar__mobile-menu"
-            aria-label="Open navigation menu"
-          >
-            ☰
-          </Button>
         </Stack>
       </Container>
     </header>

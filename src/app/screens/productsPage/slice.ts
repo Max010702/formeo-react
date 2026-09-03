@@ -5,7 +5,7 @@ import type { ProductsPageState } from "../../lib/types/screen";
 
 const initialState: ProductsPageState = {
   restaurant: null,
-  choosenProduct: null,
+  chosenProduct: null,
   products: [],
 };
 
@@ -17,8 +17,8 @@ const productsPageSlice = createSlice({
       state.restaurant = action.payload;
     },
 
-    setChoosenProduct: (state, action: PayloadAction<Product | null>) => {
-      state.choosenProduct = action.payload;
+    setChosenProduct: (state, action: PayloadAction<Product | null>) => {
+      state.chosenProduct = action.payload;
     },
 
     setProducts: (state, action: PayloadAction<Product[]>) => {
@@ -27,7 +27,7 @@ const productsPageSlice = createSlice({
   },
 });
 
-export const { setRestaurant, setChoosenProduct, setProducts } =
+export const { setRestaurant, setChosenProduct, setProducts } =
   productsPageSlice.actions;
 
 const ProductsPageReducer = productsPageSlice.reducer;

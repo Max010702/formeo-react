@@ -8,9 +8,9 @@ export const retrieveRestaurant = createSelector(
   (productsPage) => productsPage.restaurant,
 );
 
-export const retrieveChoosenProduct = createSelector(
+export const retrieveChosenProduct = createSelector(
   selectProductsPage,
-  (productsPage) => productsPage.choosenProduct,
+  (productsPage) => productsPage.chosenProduct,
 );
 
 export const retrieveProducts = createSelector(

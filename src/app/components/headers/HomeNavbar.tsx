@@ -1,40 +1,59 @@
+import { useEffect, useState } from "react";
 import { Box, Button, Container, Stack } from "@mui/material";
 import { NavLink } from "react-router-dom";
-import "../../../css/navbar.css";
 import Basket from "./Basket";
-import { useEffect, useState } from "react";
+import type { CartItem } from "../../lib/types/search";
 
-export default function HomeNavbar() {
-  const authMember = true;
+interface HomeNavbarProps {
+  cartItems: CartItem[];
+  onAdd: (item: CartItem) => void;
+  onRemove: (item: CartItem) => void;
+  onDelete: (item: CartItem) => void;
+  onOrder?: () => void;
+}
 
-  const [count, setCount] = useState<number>(0);
-  const [value, setvalue] = useState<boolean>(true);
+export default function HomeNavbar({
+  cartItems,
+  onAdd,
+  onRemove,
+  onDelete,
+  onOrder,
+}: HomeNavbarProps) {
+  const authMember = null;
+  const [serviceHours, setServiceHours] = useState(0);
+  const [showSignupMessage, setShowSignupMessage] = useState(false);
 
   useEffect(() => {
-    console.log("componentDidMount", count); // DATA FETCH
-    setCount(count + 1);
+    const intervalId = window.setInterval(() => {
+      setServiceHours((previousHours) => {
+        if (previousHours >= 24) {
+          window.clearInterval(intervalId);
+          return 24;
+        }
+
+        return previousHours + 1;
+      });
+    }, 50);
 
     return () => {
-      console.log("componentWillUnmount");
+      window.clearInterval(intervalId);
     };
-  }, [value]);
+  }, []);
 
-  /* HANDLERS */
-
-  const buttonHandler = () => {
-    setvalue(!value);
+  const handleSignup = () => {
+    setShowSignupMessage((previousValue) => !previousValue);
   };
 
   return (
-    <div className="home-navbar">
+    <header className="home-navbar">
       <Container className="navbar-container">
         <Stack className="menu">
-          <Box>
-            <NavLink to="/" className="brand-link">
+          <Box className="brand">
+            <NavLink to="/" aria-label="Go to home page">
               <img
                 className="brand-logo"
                 src="/icons/burak.svg"
-                alt="Furniture logo"
+                alt="Formeo Furniture"
               />
             </NavLink>
           </Box>
@@ -47,26 +66,26 @@ export default function HomeNavbar() {
             </Box>
 
             <Box className="hover-line">
-              <NavLink to="/products" activeClassName={"underline"}>
+              <NavLink to="/products" activeClassName="underline">
                 Products
               </NavLink>
             </Box>
 
-            {authMember ? (
-              <Box className="hover-line">
-                <NavLink to="/orders" activeClassName={"underline"}>
-                  Orders
-                </NavLink>
-              </Box>
-            ) : null}
+            {authMember && (
+              <>
+                <Box className="hover-line">
+                  <NavLink to="/orders" activeClassName="underline">
+                    Orders
+                  </NavLink>
+                </Box>
 
-            {authMember ? (
-              <Box className="hover-line">
-                <NavLink to="/member-page" activeClassName="underline">
-                  My Page
-                </NavLink>
-              </Box>
-            ) : null}
+                <Box className="hover-line">
+                  <NavLink to="/member-page" activeClassName="underline">
+                    My Page
+                  </NavLink>
+                </Box>
+              </>
+            )}
 
             <Box className="hover-line">
               <NavLink to="/help" activeClassName="underline">
@@ -74,14 +93,18 @@ export default function HomeNavbar() {
               </NavLink>
             </Box>
 
-            <Basket />
+            <Basket
+              cartItems={cartItems}
+              onAdd={onAdd}
+              onRemove={onRemove}
+              onDelete={onDelete}
+              onOrder={onOrder}
+            />
 
             {!authMember ? (
-              <Box>
-                <Button variant="contained" className="login-button">
-                  Login
-                </Button>
-              </Box>
+              <Button variant="contained" className="login-button">
+                Login
+              </Button>
             ) : (
               <img
                 className="user-avatar"
@@ -95,54 +118,45 @@ export default function HomeNavbar() {
 
         <Stack className="header-frame">
           <Stack className="detail">
-            <Box className="small-title">
-              Timeless design · Exceptional comfort
+            <Box className="hero-eyebrow">Timeless furniture collection</Box>
+
+            <Box component="h1" className="head-main-txt">
+              Thoughtful design for modern living
             </Box>
 
-            <Box className="head-main-txt">
-              Furniture made for
-              <span> inspired living.</span>
-            </Box>
-
-            <Box className="welcome-txt">
-              Transform your home with beautifully crafted furniture designed to
-              bring warmth, comfort, and character into every room.
+            <Box component="p" className="welcome-txt">
+              Discover beautifully crafted furniture designed to make every
+              space feel like home.
             </Box>
 
             <Box className="service-txt">
-              Premium materials · Thoughtful craftsmanship
+              Customer service available {serviceHours} hours
             </Box>
 
-            <Stack className="hero-actions">
-              <Button
-                component={NavLink}
-                to="/products"
-                variant="contained"
-                className="shop-button"
-              >
-                Explore collection
-              </Button>
-
-              {!authMember ? (
+            {!authMember && (
+              <Box className="signup">
                 <Button
-                  component={NavLink}
-                  to="/signup"
-                  variant="outlined"
+                  variant="contained"
                   className="signup-button"
+                  onClick={handleSignup}
                 >
-                  Sign up
+                  Explore Collection
                 </Button>
-              ) : null}
-            </Stack>
+
+                {showSignupMessage && (
+                  <Box className="signup-message">
+                    Create an account to save your favorite furniture.
+                  </Box>
+                )}
+              </Box>
+            )}
           </Stack>
 
-          <Box className="hero-number">
-            <span>01</span>
-            <div />
-            <span>03</span>
+          <Box className="logo-frame" aria-hidden="true">
+            <div className="logo-image" />
           </Box>
         </Stack>
       </Container>
-    </div>
+    </header>
   );
 }

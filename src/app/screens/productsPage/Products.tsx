@@ -1,353 +1,343 @@
-import React from "react";
 import {
+  Badge,
   Box,
   Button,
-  CircularProgress,
   Container,
-  Rating,
+  Pagination,
+  PaginationItem,
   Stack,
 } from "@mui/material";
-import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
-import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
-import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined";
-import VerifiedOutlinedIcon from "@mui/icons-material/VerifiedOutlined";
-import ReplayOutlinedIcon from "@mui/icons-material/ReplayOutlined";
-import AddIcon from "@mui/icons-material/Add";
-import RemoveIcon from "@mui/icons-material/Remove";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation } from "swiper";
-import { useParams } from "react-router-dom";
+import SearchIcon from "@mui/icons-material/Search";
+import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
+import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import { useEffect, useState, type ChangeEvent } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { createSelector } from "reselect";
+import { useHistory } from "react-router-dom";
 
-import "swiper/css";
-import "swiper/css/navigation";
-import "../../../css/products.css";
-
-import { setChoosenProduct } from "./slice";
-import { retrieveChoosenProduct, retrieveRestaurant } from "./selector";
-import { serverApi } from "../../lib/config";
+import { setProducts } from "./slice";
+import { retrieveProducts } from "./selector";
 import ProductService from "../../services/ProductService";
+import { serverApi } from "../../lib/config";
+import { ProductCategories } from "../../lib/enums/product.enum";
+import type { Product, ProductInquiry } from "../../lib/types/product";
+import type { CartItem } from "../../lib/types/search";
 
-const chosenProductRetriever = createSelector(
-  retrieveChoosenProduct,
-  (chosenProduct) => ({ chosenProduct }),
-);
+interface ProductsProps {
+  onAdd: (item: CartItem) => void;
+}
 
-const restaurantRetriever = createSelector(
-  retrieveRestaurant,
-  (restaurant) => ({ restaurant }),
-);
+const furnitureCategories = Object.values(ProductCategories);
 
-const formatText = (value?: string): string =>
-  (value ?? "OTHERNone")
-    .toLowerCase()
-    .replace(/_/g, " ")
-    .replace(/\b\w/g, (letter) => letter.toUpperCase());
-
-const getImageUrl = (image?: string): string => {
-  if (!image) {
-    return "/images/product-placeholder.webp";
-  }
-
-  if (image.startsWith("http://") || image.startsWith("https://")) {
-    return image;
-  }
-
-  const normalizedServer = serverApi.replace(/\/$/, "");
-  const normalizedImage = image.replace(/^\//, "");
-
-  return `${normalizedServer}/${normalizedImage}`;
-};
-
-export default function ChosenProduct() {
+export default function Products({ onAdd }: ProductsProps) {
   const dispatch = useDispatch();
-  const { productId } = useParams<{ productId: string }>();
+  const history = useHistory();
+  const products = useSelector(retrieveProducts);
 
-  const { chosenProduct } = useSelector(chosenProductRetriever);
-  const { restaurant } = useSelector(restaurantRetriever);
+  const [productSearch, setProductSearch] = useState<ProductInquiry>({
+    page: 1,
+    limit: 8,
+    order: "createdAt",
+    search: "",
+  });
 
-  const [quantity, setQuantity] = React.useState(1);
-  const [activeImage, setActiveImage] = React.useState(0);
-  const [loading, setLoading] = React.useState(true);
-  const swiperRef = React.useRef<any>(null);
+  const [searchText, setSearchText] = useState("");
 
-  React.useEffect(() => {
-    if (!productId) {
-      setLoading(false);
-      return;
-    }
-
+  useEffect(() => {
     const productService = new ProductService();
 
-    setLoading(true);
-
     productService
-      .getProduct(productId)
+      .getProducts(productSearch)
       .then((data) => {
-        dispatch(setChoosenProduct(data));
+        dispatch(setProducts(data));
       })
       .catch((error) => {
-        console.log("getProduct error:", error);
-        dispatch(setChoosenProduct(null));
-      })
-      .finally(() => {
-        setLoading(false);
+        console.error("Failed to load products:", error);
       });
+  }, [dispatch, productSearch]);
 
-    return () => {
-      dispatch(setChoosenProduct(null));
-    };
-  }, [dispatch, productId]);
-
-  const selectImage = (index: number) => {
-    setActiveImage(index);
-    swiperRef.current?.slideToLoop(index);
+  const searchCategoryHandler = (category?: ProductCategories) => {
+    setProductSearch((previous) => ({
+      ...previous,
+      page: 1,
+      productCategories: category,
+    }));
   };
 
-  const decreaseQuantity = () => {
-    setQuantity((current) => Math.max(1, current - 1));
+  const searchOrderHandler = (order: string) => {
+    setProductSearch((previous) => ({
+      ...previous,
+      page: 1,
+      order,
+    }));
   };
 
-  const increaseQuantity = () => {
-    if (!chosenProduct) return;
-
-    setQuantity((current) =>
-      Math.min(current + 1, chosenProduct.productLeftCount),
-    );
+  const searchProductHandler = () => {
+    setProductSearch((previous) => ({
+      ...previous,
+      page: 1,
+      search: searchText.trim(),
+    }));
   };
 
-  const addToBasketHandler = () => {
-    if (!chosenProduct) return;
+  const searchTextHandler = (event: ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
 
-    console.log("Add to basket:", {
-      product: chosenProduct,
-      quantity,
+    setSearchText(value);
+
+    if (value === "") {
+      setProductSearch((previous) => ({
+        ...previous,
+        page: 1,
+        search: "",
+      }));
+    }
+  };
+
+  const paginationHandler = (_event: ChangeEvent<unknown>, page: number) => {
+    setProductSearch((previous) => ({
+      ...previous,
+      page,
+    }));
+  };
+
+  const chooseProductHandler = (productId: string) => {
+    history.push(`/products/${productId}`);
+  };
+
+  const addToBasketHandler = (
+    event: React.MouseEvent<HTMLButtonElement>,
+    product: Product,
+  ) => {
+    event.stopPropagation();
+
+    onAdd({
+      _id: product._id,
+      quantity: 1,
+      name: product.productName,
+      price: product.productPrice,
+      image: product.productImages[0] ?? "",
     });
   };
 
-  if (loading) {
-    return (
-      <Stack className="chosen-product__loading">
-        <CircularProgress />
-        <span>Loading product...</span>
-      </Stack>
-    );
-  }
-
-  if (!chosenProduct) {
-    return (
-      <Stack className="chosen-product__not-found">
-        <Box component="h2">Product not found</Box>
-        <Box>The requested furniture product is unavailable.</Box>
-      </Stack>
-    );
-  }
-
-  const images =
-    chosenProduct.productImages?.length > 0
-      ? chosenProduct.productImages
-      : ["/images/product-placeholder.webp"];
-
-  const category = formatText(chosenProduct.productCategories);
-  const material = formatText(chosenProduct.productMaterial);
-  const color = formatText(chosenProduct.productColor);
-
-  const totalPrice = Number(chosenProduct.productPrice || 0) * quantity;
+  const formatCategory = (category: string) => {
+    return category
+      .replaceAll("_", " ")
+      .toLowerCase()
+      .replace(/\b\w/g, (letter) => letter.toUpperCase());
+  };
 
   return (
-    <main className="chosen-product">
-      <Container className="chosen-product__container">
-        <Box className="chosen-product__breadcrumb">
-          Home <span>/</span> Products <span>/</span>{" "}
-          {chosenProduct.productName}
-        </Box>
+    <main className="products">
+      <Container>
+        <Stack direction="column" alignItems="center">
+          <Stack className="avatar-big-box">
+            <Stack className="top-text">
+              <p>Discover Our Furniture Collection</p>
 
-        <Box className="chosen-product__layout">
-          <Stack className="chosen-product__gallery">
-            <Swiper
-              loop={images.length > 1}
-              navigation={images.length > 1}
-              modules={[Navigation]}
-              className="chosen-product__slider"
-              onSwiper={(swiper: any) => {
-                swiperRef.current = swiper;
-              }}
-              onSlideChange={(swiper: {
-                realIndex: React.SetStateAction<number>;
-              }) => {
-                setActiveImage(swiper.realIndex);
-              }}
-            >
-              {images.map((image, index) => (
-                <SwiperSlide key={`${image}-${index}`}>
-                  <img
-                    className="chosen-product__image"
-                    src={getImageUrl(image)}
-                    alt={`${chosenProduct.productName} view ${index + 1}`}
-                    onError={(event) => {
-                      event.currentTarget.src =
-                        "/images/product-placeholder.webp";
-                    }}
-                  />
-                </SwiperSlide>
-              ))}
-            </Swiper>
+              <Stack className="single-search-big-box">
+                <input
+                  type="search"
+                  className="single-search-input"
+                  name="productSearch"
+                  placeholder="Search furniture..."
+                  value={searchText}
+                  onChange={searchTextHandler}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter") {
+                      searchProductHandler();
+                    }
+                  }}
+                />
 
-            {images.length > 1 && (
-              <Stack className="chosen-product__thumbnails">
-                {images.map((image, index) => (
-                  <button
-                    type="button"
-                    key={`${image}-${index}`}
-                    className={`chosen-product__thumbnail ${
-                      activeImage === index ? "active" : ""
-                    }`}
-                    onClick={() => selectImage(index)}
-                    aria-label={`Show image ${index + 1}`}
-                  >
-                    <img src={getImageUrl(image)} alt="" />
-                  </button>
-                ))}
+                <Button
+                  className="single-button-search"
+                  variant="contained"
+                  endIcon={<SearchIcon />}
+                  onClick={searchProductHandler}
+                >
+                  Search
+                </Button>
               </Stack>
-            )}
+            </Stack>
           </Stack>
 
-          <Stack className="chosen-product__information">
-            <Box className="chosen-product__eyebrow">{category}</Box>
+          <Stack className="dishes-filter-section">
+            <Stack className="dishes-filter-box">
+              <Button
+                variant="contained"
+                className="order"
+                color={
+                  productSearch.order === "createdAt" ? "primary" : "secondary"
+                }
+                onClick={() => searchOrderHandler("createdAt")}
+              >
+                New
+              </Button>
 
-            <Box component="h1" className="chosen-product__name">
-              {chosenProduct.productName}
-            </Box>
+              <Button
+                variant="contained"
+                className="order"
+                color={
+                  productSearch.order === "productPrice"
+                    ? "primary"
+                    : "secondary"
+                }
+                onClick={() => searchOrderHandler("productPrice")}
+              >
+                Price
+              </Button>
 
-            <Box className="chosen-product__collection">
-              {restaurant?.memberNick ?? "Forma Furniture"}
-            </Box>
-
-            {restaurant?.memberPhone && (
-              <Box className="chosen-product__collection">
-                {restaurant.memberPhone}
-              </Box>
-            )}
-
-            <Stack className="chosen-product__rating-row">
-              <Rating value={4.5} precision={0.5} readOnly />
-
-              <span>4.5 customer rating</span>
-
-              <Box className="chosen-product__views">
-                <VisibilityOutlinedIcon />
-                {chosenProduct.productView ?? 0}
-              </Box>
+              <Button
+                variant="contained"
+                className="order"
+                color={
+                  productSearch.order === "productView"
+                    ? "primary"
+                    : "secondary"
+                }
+                onClick={() => searchOrderHandler("productView")}
+              >
+                Views
+              </Button>
             </Stack>
+          </Stack>
 
-            <Box className="chosen-product__description">
-              {chosenProduct.productDesc ||
-                "Thoughtfully designed furniture made with quality materials and lasting comfort."}
-            </Box>
-
-            <Box className="chosen-product__specifications">
-              <Stack className="chosen-product__specification">
-                <span>Category</span>
-                <strong>{category}</strong>
-              </Stack>
-
-              <Stack className="chosen-product__specification">
-                <span>Material</span>
-                <strong>{material}</strong>
-              </Stack>
-
-              <Stack className="chosen-product__specification">
-                <span>Color</span>
-                <strong>{color}</strong>
-              </Stack>
-
-              <Stack className="chosen-product__specification">
-                <span>Availability</span>
-
-                <strong>
-                  {chosenProduct.productLeftCount > 0
-                    ? `${chosenProduct.productLeftCount} in stock`
-                    : "Out of stock"}
-                </strong>
-              </Stack>
-            </Box>
-
-            <Stack className="chosen-product__purchase">
-              <Box>
-                <Box className="chosen-product__price-label">Price</Box>
-
-                <Box className="chosen-product__price">
-                  ${Number(chosenProduct.productPrice).toLocaleString()}
-                </Box>
-              </Box>
-
-              <Stack className="chosen-product__quantity">
+          <Stack className="list-category-section">
+            <Stack className="product-category">
+              <Box className="category-main">
                 <Button
-                  aria-label="Decrease quantity"
-                  disabled={quantity <= 1}
-                  onClick={decreaseQuantity}
-                >
-                  <RemoveIcon />
-                </Button>
-
-                <span>{quantity}</span>
-
-                <Button
-                  aria-label="Increase quantity"
-                  disabled={
-                    chosenProduct.productLeftCount === 0 ||
-                    quantity >= chosenProduct.productLeftCount
+                  variant="contained"
+                  color={
+                    productSearch.productCategories === undefined
+                      ? "primary"
+                      : "secondary"
                   }
-                  onClick={increaseQuantity}
+                  onClick={() => searchCategoryHandler()}
                 >
-                  <AddIcon />
+                  All
                 </Button>
-              </Stack>
+
+                {furnitureCategories.map((category) => (
+                  <Button
+                    key={category}
+                    variant="contained"
+                    color={
+                      productSearch.productCategories === category
+                        ? "primary"
+                        : "secondary"
+                    }
+                    onClick={() => searchCategoryHandler(category)}
+                  >
+                    {formatCategory(category)}
+                  </Button>
+                ))}
+              </Box>
             </Stack>
 
-            <Button
-              variant="contained"
-              startIcon={<ShoppingBagOutlinedIcon />}
-              className="chosen-product__basket-button"
-              disabled={chosenProduct.productLeftCount === 0}
-              onClick={addToBasketHandler}
-            >
-              {chosenProduct.productLeftCount > 0
-                ? `Add to basket · $${totalPrice.toLocaleString()}`
-                : "Out of stock"}
-            </Button>
+            <Stack className="product-wrapper">
+              {products.length > 0 ? (
+                products.map((product: Product) => {
+                  const productImage = product.productImages[0];
 
-            <Box className="chosen-product__services">
-              <Stack className="chosen-product__service">
-                <LocalShippingOutlinedIcon />
+                  const imagePath = productImage
+                    ? productImage.startsWith("http")
+                      ? productImage
+                      : `${serverApi}/${productImage}`
+                    : "/icons/noimage-list.svg";
 
-                <Box>
-                  <strong>Premium delivery</strong>
-                  <span>Delivered carefully to your room</span>
-                </Box>
-              </Stack>
+                  return (
+                    <Stack
+                      key={product._id}
+                      className="product-card"
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => chooseProductHandler(product._id)}
+                      onKeyDown={(event) => {
+                        if (event.key === "Enter" || event.key === " ") {
+                          chooseProductHandler(product._id);
+                        }
+                      }}
+                    >
+                      <Stack
+                        className="product-img"
+                        sx={{
+                          backgroundImage: `url("${imagePath}")`,
+                        }}
+                      >
+                        <Box className="product-sale">
+                          {formatCategory(product.productCategories)}
+                        </Box>
 
-              <Stack className="chosen-product__service">
-                <VerifiedOutlinedIcon />
+                        <Button
+                          className="shop-btn"
+                          aria-label={`Add ${product.productName} to basket`}
+                          disabled={product.productLeftCount <= 0}
+                          onClick={(event) =>
+                            addToBasketHandler(event, product)
+                          }
+                        >
+                          <img src="/icons/shopping-cart.svg" alt="" />
+                        </Button>
 
-                <Box>
-                  <strong>Quality guarantee</strong>
-                  <span>Crafted from selected materials</span>
-                </Box>
-              </Stack>
+                        <Box className="view-btn" sx={{ right: "36px" }}>
+                          <Badge
+                            badgeContent={product.productView}
+                            color="secondary"
+                            showZero
+                          >
+                            <RemoveRedEyeIcon
+                              sx={{
+                                color:
+                                  product.productView === 0 ? "gray" : "white",
+                              }}
+                            />
+                          </Badge>
+                        </Box>
+                      </Stack>
 
-              <Stack className="chosen-product__service">
-                <ReplayOutlinedIcon />
+                      <Box className="product-desc">
+                        <span className="product-title">
+                          {product.productName}
+                        </span>
 
-                <Box>
-                  <strong>Easy returns</strong>
-                  <span>Returns available on eligible items</span>
-                </Box>
-              </Stack>
-            </Box>
+                        <Box className="product-price">
+                          <MonetizationOnIcon />
+                          {product.productPrice.toLocaleString()}
+                        </Box>
+                      </Box>
+                    </Stack>
+                  );
+                })
+              ) : (
+                <Box className="no-data">Products are not available!</Box>
+              )}
+            </Stack>
           </Stack>
-        </Box>
+
+          <Stack className="pagination-section">
+            <Pagination
+              page={productSearch.page}
+              count={
+                products.length === productSearch.limit
+                  ? productSearch.page + 1
+                  : productSearch.page
+              }
+              onChange={paginationHandler}
+              renderItem={(item) => (
+                <PaginationItem
+                  {...item}
+                  color="secondary"
+                  components={{
+                    previous: ArrowBackIcon,
+                    next: ArrowForwardIcon,
+                  }}
+                />
+              )}
+            />
+          </Stack>
+        </Stack>
       </Container>
     </main>
   );
