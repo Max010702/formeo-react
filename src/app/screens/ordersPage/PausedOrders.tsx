@@ -1,216 +1,130 @@
 import { Box, Button, Stack } from "@mui/material";
 import TabPanel from "@mui/lab/TabPanel";
-import ScheduleOutlinedIcon from "@mui/icons-material/ScheduleOutlined";
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
-import PaymentOutlinedIcon from "@mui/icons-material/PaymentOutlined";
-import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
-import "../../../css/order.css";
+import { useSelector } from "react-redux";
 
-interface PendingProduct {
-  id: number;
-  name: string;
-  image: string;
-  material: string;
-  price: number;
-  quantity: number;
-}
-
-interface PendingOrder {
-  id: string;
-  createdAt: string;
-  expiresIn: string;
-  delivery: number;
-  products: PendingProduct[];
-}
-
-const pendingOrders: PendingOrder[] = [
-  {
-    id: "FRM-2026-0524",
-    createdAt: "August 28, 2026",
-    expiresIn: "Payment required",
-    delivery: 25,
-    products: [
-      {
-        id: 1,
-        name: "Cloud Modular Sofa",
-        image: "/img/sofa.webp",
-        material: "Natural ivory bouclé",
-        price: 1890,
-        quantity: 1,
-      },
-      {
-        id: 2,
-        name: "Nova Coffee Table",
-        image: "/img/coffee-table.webp",
-        material: "Natural travertine",
-        price: 760,
-        quantity: 1,
-      },
-    ],
-  },
-  {
-    id: "FRM-2026-0519",
-    createdAt: "August 26, 2026",
-    expiresIn: "Awaiting confirmation",
-    delivery: 25,
-    products: [
-      {
-        id: 3,
-        name: "Cane Lounge Chair",
-        image: "/img/lounge-chair.webp",
-        material: "Oak and natural cane",
-        price: 680,
-        quantity: 2,
-      },
-    ],
-  },
-];
+import { retrievePausedOrders } from "./selector";
+import { serverApi } from "../../lib/config";
 
 export default function PausedOrders() {
+  const pausedOrders = useSelector(retrievePausedOrders);
+
   return (
-    <TabPanel value="3">
-      <Box className="pending-orders">
-        {pendingOrders.length > 0 ? (
-          <Stack className="pending-orders__list">
-            {pendingOrders.map((order) => {
-              const subtotal = order.products.reduce(
-                (total, product) => total + product.price * product.quantity,
-                0,
-              );
+    <TabPanel value="1">
+      <Stack>
+        {pausedOrders.map((order) => (
+          <Box key={order._id} className="order-main-box">
+            <Box className="order-box-scroll">
+              {order.orderItems.map((item) => {
+                const product = order.productData.find(
+                  (productItem) => productItem._id === item.productId,
+                );
 
-              const total = subtotal + order.delivery;
+                if (!product) {
+                  return null;
+                }
 
-              return (
-                <Box className="pending-order" key={order.id}>
-                  <Stack className="pending-order__header">
-                    <Stack className="pending-order__identity">
-                      <Box className="pending-order__status-icon">
-                        <ScheduleOutlinedIcon />
-                      </Box>
+                const productImage = product.productImages[0];
 
-                      <Box>
-                        <Box className="pending-order__eyebrow">
-                          Pending order
-                        </Box>
+                const imagePath = productImage
+                  ? productImage.startsWith("http")
+                    ? productImage
+                    : `${serverApi}/${productImage}`
+                  : "/icons/noimage-list.svg";
 
-                        <Box className="pending-order__number">
-                          Order #{order.id}
-                        </Box>
-                      </Box>
-                    </Stack>
+                const itemTotal = item.itemQuantity * item.itemPrice;
 
-                    <Box>
-                      <Box className="pending-order__status">
-                        {order.expiresIn}
-                      </Box>
+                return (
+                  <Box key={item._id} className="orders-name-price">
+                    <img
+                      src={imagePath}
+                      className="order-dish-img"
+                      alt={product.productName}
+                    />
 
-                      <Box className="pending-order__date">
-                        Created {order.createdAt}
-                      </Box>
+                    <p className="title-dish">{product.productName}</p>
+
+                    <Box className="price-box">
+                      <p>${item.itemPrice.toLocaleString()}</p>
+
+                      <img src="/icons/close.svg" alt="Times" />
+
+                      <p>{item.itemQuantity}</p>
+
+                      <img src="/icons/pause.svg" alt="Equals" />
+
+                      <p style={{ marginLeft: "15px" }}>
+                        ${itemTotal.toLocaleString()}
+                      </p>
                     </Box>
-                  </Stack>
-
-                  <Stack className="pending-order__products">
-                    {order.products.map((product) => (
-                      <Box className="pending-order__product" key={product.id}>
-                        <Box className="pending-order__image-wrapper">
-                          <img
-                            src={product.image}
-                            className="pending-order__image"
-                            alt={product.name}
-                          />
-                        </Box>
-
-                        <Stack className="pending-order__product-info">
-                          <Box>
-                            <Box className="pending-order__product-name">
-                              {product.name}
-                            </Box>
-
-                            <Box className="pending-order__material">
-                              {product.material}
-                            </Box>
-                          </Box>
-
-                          <Box className="pending-order__quantity">
-                            Quantity: {product.quantity}
-                          </Box>
-                        </Stack>
-
-                        <Stack className="pending-order__price-info">
-                          <Box className="pending-order__unit-price">
-                            ${product.price.toLocaleString()} each
-                          </Box>
-
-                          <Box className="pending-order__product-total">
-                            $
-                            {(
-                              product.price * product.quantity
-                            ).toLocaleString()}
-                          </Box>
-                        </Stack>
-                      </Box>
-                    ))}
-                  </Stack>
-
-                  <Stack className="pending-order__summary">
-                    <Stack className="pending-order__actions">
-                      <Button
-                        variant="outlined"
-                        startIcon={<DeleteOutlineIcon />}
-                        className="pending-order__cancel"
-                      >
-                        Cancel order
-                      </Button>
-
-                      <Button
-                        variant="contained"
-                        startIcon={<PaymentOutlinedIcon />}
-                        className="pending-order__payment"
-                      >
-                        Continue payment
-                      </Button>
-                    </Stack>
-
-                    <Stack className="pending-order__totals">
-                      <Stack className="pending-order__total-row">
-                        <span>Products</span>
-                        <strong>${subtotal.toLocaleString()}</strong>
-                      </Stack>
-
-                      <Stack className="pending-order__total-row">
-                        <span>Delivery</span>
-                        <strong>${order.delivery.toLocaleString()}</strong>
-                      </Stack>
-
-                      <Stack className="pending-order__grand-total">
-                        <span>Total</span>
-                        <strong>${total.toLocaleString()}</strong>
-                      </Stack>
-                    </Stack>
-                  </Stack>
-                </Box>
-              );
-            })}
-          </Stack>
-        ) : (
-          <Stack className="pending-orders__empty">
-            <Box className="pending-orders__empty-icon">
-              <ShoppingBagOutlinedIcon />
+                  </Box>
+                );
+              })}
             </Box>
 
-            <Box className="pending-orders__empty-title">No pending orders</Box>
+            <Box className="total-price-box">
+              <Box className="box-total">
+                <p>Product price</p>
 
-            <Box className="pending-orders__empty-text">
-              Furniture saved for checkout will appear here.
+                <p>
+                  ${(order.orderTotal - order.orderDelivery).toLocaleString()}
+                </p>
+
+                <img
+                  src="/icons/plus.svg"
+                  alt="Plus"
+                  style={{ marginLeft: "20px" }}
+                />
+
+                <p>Delivery cost</p>
+
+                <p>${order.orderDelivery.toLocaleString()}</p>
+
+                <img
+                  src="/icons/pause.svg"
+                  alt="Equals"
+                  style={{ marginLeft: "20px" }}
+                />
+
+                <p>Total</p>
+
+                <p>${order.orderTotal.toLocaleString()}</p>
+              </Box>
+
+              <Button
+                variant="contained"
+                color="secondary"
+                className="cancel-button"
+              >
+                Cancel
+              </Button>
+
+              <Button variant="contained" className="pay-button">
+                Payment
+              </Button>
             </Box>
+          </Box>
+        ))}
 
-            <Button variant="contained" className="pending-orders__shop-button">
-              Explore collection
-            </Button>
-          </Stack>
+        {pausedOrders.length === 0 && (
+          <Box
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+            justifyContent="center"
+          >
+            <img
+              src="/icons/noimage-list.svg"
+              style={{
+                width: 300,
+                height: 300,
+              }}
+              alt="No paused orders"
+            />
+
+            <Box className="no-data">No paused orders</Box>
+          </Box>
         )}
-      </Box>
+      </Stack>
     </TabPanel>
   );
 }

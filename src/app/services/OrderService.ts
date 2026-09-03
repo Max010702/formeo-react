@@ -1,77 +1,65 @@
-import axios from "axios";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
 
-import { serverApi } from "../lib/config";
-import type {
-  Order,
-  OrderInquiry,
-  OrderRequest,
-  OrderUpdateInput,
-} from "../lib/types/order";
+import Advertisement from "./Advertisement";
+import Events from "./Events";
+import NewProducts from "./NewProducts";
+import PopularProducts from "./PopularProducts";
+import Statistics from "./Statistic";
+import {
+  setNewProducts,
+  setPopularProducts,
+} from "./slice";
+import ProductService from "../../services/ProductService";
 
-class OrderService {
-  private readonly path: string;
+import "../../../css/home.css";
 
-  constructor() {
-    this.path = serverApi;
-  }
+export default function HomePage() {
+  const dispatch = useDispatch();
 
-  public async createOrder(input: OrderRequest[]): Promise<Order> {
-    try {
-      const response = await axios.post<Order>(
-        `${this.path}/order/create`,
-        input,
-        {
-          withCredentials: true,
-        },
-      );
+  useEffect(() => {
+    const productService = new ProductService();
 
-      console.log("createOrder:", response.data);
+    const loadHomeProducts = async () => {
+      try {
+        const [popularProducts, newProducts] =
+          await Promise.all([
+            productService.getProducts({
+              page: 1,
+              limit: 4,
+              order: "productView",
+            }),
 
-      return response.data;
-    } catch (error) {
-      console.error("Error, createOrder:", error);
-      throw error;
-    }
-  }
+            productService.getProducts({
+              page: 1,
+              limit: 4,
+              order: "createdAt",
+            }),
+          ]);
 
-  public async getMyOrders(input: OrderInquiry): Promise<Order[]> {
-    try {
-      const response = await axios.get<Order[]>(`${this.path}/order/all`, {
-        params: {
-          page: input.page,
-          limit: input.limit,
-          orderStatus: input.orderStatus,
-        },
-        withCredentials: true,
-      });
+        dispatch(
+          setPopularProducts(popularProducts),
+        );
 
-      console.log("getMyOrders:", response.data);
+        dispatch(setNewProducts(newProducts));
+      } catch (error) {
+        console.error(
+          "Failed to load home products:",
+          error,
+        );
+      }
+    };
 
-      return response.data;
-    } catch (error) {
-      console.error("Error, getMyOrders:", error);
-      throw error;
-    }
-  }
+    void loadHomeProducts();
+  }, [dispatch]);
 
-  public async updateOrder(input: OrderUpdateInput): Promise<Order> {
-    try {
-      const response = await axios.post<Order>(
-        `${this.path}/order/update`,
-        input,
-        {
-          withCredentials: true,
-        },
-      );
-
-      console.log("updateOrder:", response.data);
-
-      return response.data;
-    } catch (error) {
-      console.error("Error, updateOrder:", error);
-      throw error;
-    }
-  }
+  return (
+    <main className="homepage">
+      <Statistics />
+      <PopularProducts />
+      <NewProducts />
+      <Advertisement />
+      <Events />
+    </main>
+  );
 }
-
-export default OrderService;

@@ -22,7 +22,6 @@ interface OtherNavbarProps {
   onRemove: (item: CartItem) => void;
   onDelete: (item: CartItem) => void;
   onDeleteAll: () => void;
-  onOrder: () => void;
   handleLoginOpen: () => void;
   handleLogoutClick: (event: MouseEvent<HTMLElement>) => void;
   anchorEl: HTMLElement | null;
@@ -36,7 +35,6 @@ export default function OtherNavbar({
   onRemove,
   onDelete,
   onDeleteAll,
-  onOrder,
   handleLoginOpen,
   handleLogoutClick,
   anchorEl,
@@ -106,7 +104,6 @@ export default function OtherNavbar({
               onRemove={onRemove}
               onDelete={onDelete}
               onDeleteAll={onDeleteAll}
-              onOrder={onOrder}
             />
 
             {!authMember ? (

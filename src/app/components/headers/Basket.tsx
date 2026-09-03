@@ -3,9 +3,14 @@ import { Badge, Box, Button, IconButton, Menu, Stack } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import { useHistory } from "react-router-dom";
 
 import type { CartItem } from "../../lib/types/search";
-import { serverApi } from "../../lib/config";
+import type { OrderRequest } from "../../lib/types/order";
+import { Messages, serverApi } from "../../lib/config";
+import { sweetErrorHandling } from "../../lib/sweetAlert";
+import { useGlobals } from "../../hooks/useGlobals";
+import OrderService from "../../services/OrderService";
 
 interface BasketProps {
   cartItems: CartItem[];
@@ -13,7 +18,6 @@ interface BasketProps {
   onRemove: (item: CartItem) => void;
   onDelete: (item: CartItem) => void;
   onDeleteAll: () => void;
-  onOrder: () => void;
 }
 
 export default function Basket({
@@ -22,9 +26,13 @@ export default function Basket({
   onRemove,
   onDelete,
   onDeleteAll,
-  onOrder,
 }: BasketProps) {
+  const { authMember } = useGlobals();
+  const history = useHistory();
+
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+
+  const [loading, setLoading] = useState(false);
 
   const open = Boolean(anchorEl);
 
@@ -50,11 +58,35 @@ export default function Basket({
     setAnchorEl(null);
   };
 
-  const handleOrder = () => {
-    if (cartItems.length === 0) return;
+  const proceedOrderHandler = async () => {
+    try {
+      if (!authMember) {
+        throw new Error(Messages.error2);
+      }
 
-    handleClose();
-    onOrder();
+      if (cartItems.length === 0) {
+        return;
+      }
+
+      const orderInput: OrderRequest[] = cartItems.map((item) => ({
+        itemQuantity: item.quantity,
+        itemPrice: item.price,
+        productId: item._id,
+      }));
+
+      setLoading(true);
+
+      const orderService = new OrderService();
+      await orderService.createOrder(orderInput);
+
+      onDeleteAll();
+      handleClose();
+      history.push("/orders");
+    } catch (error) {
+      await sweetErrorHandling(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -148,7 +180,7 @@ export default function Basket({
                       : `${serverApi}/${item.image}`;
 
                     return (
-                      <Box className="basket-info-box" key={item._id}>
+                      <Box key={item._id} className="basket-info-box">
                         <IconButton
                           size="small"
                           className="cancel-btn"
@@ -176,7 +208,6 @@ export default function Basket({
                           <button
                             type="button"
                             className="remove"
-                            aria-label={`Decrease ${item.name}`}
                             onClick={() => onRemove(item)}
                           >
                             −
@@ -187,7 +218,6 @@ export default function Basket({
                           <button
                             type="button"
                             className="add"
-                            aria-label={`Increase ${item.name}`}
                             onClick={() => onAdd(item)}
                           >
                             +
@@ -214,9 +244,10 @@ export default function Basket({
                 <Button
                   variant="contained"
                   startIcon={<ShoppingCartIcon />}
-                  onClick={handleOrder}
+                  disabled={loading}
+                  onClick={() => void proceedOrderHandler()}
                 >
-                  Order
+                  {loading ? "Processing..." : "Order"}
                 </Button>
               </Box>
             </>

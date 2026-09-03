@@ -22,7 +22,6 @@ interface HomeNavbarProps {
   onRemove: (item: CartItem) => void;
   onDelete: (item: CartItem) => void;
   onDeleteAll: () => void;
-  onOrder: () => void;
   handleSignupOpen: () => void;
   handleLoginOpen: () => void;
   handleLogoutClick: (event: MouseEvent<HTMLElement>) => void;
@@ -37,7 +36,6 @@ export default function HomeNavbar({
   onRemove,
   onDelete,
   onDeleteAll,
-  onOrder,
   handleSignupOpen,
   handleLoginOpen,
   handleLogoutClick,
@@ -108,7 +106,6 @@ export default function HomeNavbar({
               onRemove={onRemove}
               onDelete={onDelete}
               onDeleteAll={onDeleteAll}
-              onOrder={onOrder}
             />
 
             {!authMember ? (

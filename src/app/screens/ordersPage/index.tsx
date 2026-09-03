@@ -1,19 +1,62 @@
-import { useState, type SyntheticEvent } from "react";
+import { useEffect, useState, type SyntheticEvent } from "react";
 import { Box, Container, Stack, Tab, Tabs } from "@mui/material";
 import TabContext from "@mui/lab/TabContext";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
+import { useDispatch } from "react-redux";
 
 import PausedOrders from "./PausedOrders";
 import ProcessOrders from "./ProcessOrders";
 import FinishedOrders from "./FinishedOrders";
-import { useGlobals } from "../../hooks/useGlobals";
+import { setFinishedOrders, setPausedOrders, setProcessOrders } from "./slice";
+import OrderService from "../../services/OrderService";
+import { OrderStatus } from "../../lib/enums/order.enum";
 import { serverApi } from "../../lib/config";
+import { useGlobals } from "../../hooks/useGlobals";
 
 import "../../../css/order.css";
 
 export default function OrdersPage() {
-  const [value, setValue] = useState("1");
+  const dispatch = useDispatch();
   const { authMember } = useGlobals();
+  const [value, setValue] = useState("1");
+
+  useEffect(() => {
+    const orderService = new OrderService();
+
+    const loadOrders = async () => {
+      try {
+        const [pausedOrders, processOrders, finishedOrders] = await Promise.all(
+          [
+            orderService.getMyOrders({
+              page: 1,
+              limit: 5,
+              orderStatus: OrderStatus.PAUSE,
+            }),
+
+            orderService.getMyOrders({
+              page: 1,
+              limit: 5,
+              orderStatus: OrderStatus.PROCESS,
+            }),
+
+            orderService.getMyOrders({
+              page: 1,
+              limit: 5,
+              orderStatus: OrderStatus.FINISH,
+            }),
+          ],
+        );
+
+        dispatch(setPausedOrders(pausedOrders));
+        dispatch(setProcessOrders(processOrders));
+        dispatch(setFinishedOrders(finishedOrders));
+      } catch (error) {
+        console.error("Failed to load orders:", error);
+      }
+    };
+
+    void loadOrders();
+  }, [dispatch]);
 
   const handleChange = (_event: SyntheticEvent, newValue: string) => {
     setValue(newValue);
